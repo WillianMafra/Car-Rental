@@ -27,10 +27,15 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+        // Validating the data
+        $request->validate($this->brand->rules());
+
+        // store the new brand
         $newBrand = new Brand();
         $newBrand->fill($request->all());
         $newBrand->save();
-        return $newBrand;
+
+        return response()->json(['msg' => "Brand $request->name created successfully"], 200);
     }
 
     /**
@@ -39,7 +44,14 @@ class BrandController extends Controller
     public function show($brandId)
     {
         $brand = $this->brand->find($brandId);
-        return $brand;
+        
+        // If the resource was not found, return with 404 and a error msg
+        if($brand === null){
+            return response()->json(['Error' =>'Brand not found'], 404);
+        }
+
+        // If the resource was found, return the data with 200
+        return response()->json($brand, 200);
     }
 
 
@@ -48,9 +60,18 @@ class BrandController extends Controller
      */
     public function update(Request $request, $brandId)
     {
+
         $brand = $this->brand->find($brandId);
+         // If the resource was not found, return with 404 and a error msg
+        if($brand === null){
+            return response()->json(['Error' =>'Brand not found'], 404);
+        }
+        // doing the data validation
+        $request->validate($this->brand->rules($brandId));
+
+        // If the resource was found, updade the resource and return with 200
         $brand->update($request->all());
-        return $brand;
+        return response()->json(['msg' => "Brand updated successfully"], 200);
     }
 
     /**
@@ -58,6 +79,15 @@ class BrandController extends Controller
      */
     public function destroy($brandId)
     {
-        return $this->brand->destroy($brandId);
+        $brand = $this->brand->find($brandId);
+
+         // If the resource was not found, return with 404 and a error msg
+        if($brand === null){
+            return response()->json(['Error' =>'Brand not found'], 404);
+        }
+
+        // If the resource was found,delete the resource and return with 200
+        $this->brand->destroy($brandId);
+        return response()->json(['msg' => "Brand deleted successfully"], 200);
     }
 }
