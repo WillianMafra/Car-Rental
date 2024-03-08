@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
+
+    // To debug in POSTMAN, set in Header Accept => application/json
     public $brand;
     public function __construct(Brand $brand)
     {
@@ -66,8 +68,21 @@ class BrandController extends Controller
         if($brand === null){
             return response()->json(['Error' =>'Brand not found'], 404);
         }
-        // doing the data validation
-        $request->validate($this->brand->rules($brandId));
+
+        // If the method is PATCH, we need to validete only the data was send
+        if($request->method() === 'PATCH'){
+            $dynamicRules = [];
+
+            foreach($brand->rules() as $input => $rule){
+                if(array_key_exists($input, $request->all())){
+                    $dynamicRules[$input] = $rule;
+                }
+            }
+            $request->validate($this->brand->dynamicrules($dynamicRules, $brandId));
+        } else {
+            // doing the full data validation
+            $request->validate($this->brand->rules($brandId));
+        }
 
         // If the resource was found, updade the resource and return with 200
         $brand->update($request->all());

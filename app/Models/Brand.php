@@ -20,4 +20,12 @@ class Brand extends Model
             'image' => 'required',
         ];
     }
+    public function dynamicrules($rulesArray, $brandId = 0){
+         // Setting dynamic rules for validation   
+        if(isset($rulesArray['name'])){
+            $rulesArray['name'] = ['required',
+            Rule::unique('brands')->ignore($brandId)];
+        }
+        return $rulesArray;
+    }
 }
