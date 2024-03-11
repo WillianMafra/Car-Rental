@@ -31,8 +31,6 @@ class BrandController extends Controller
     public function store(Request $request)
     {
 
-
-        
         // Validating the data
         $request->validate($this->brand->rules());
 
