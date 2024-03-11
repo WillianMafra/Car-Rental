@@ -17,7 +17,7 @@ class Brand extends Model
             'name' => 
                 ['required',
                 Rule::unique('brands')->ignore($brandId)],
-            'image' => 'required',
+            'image' => 'required|file|mimes:png,jpeg,jpg',
         ];
     }
     public function dynamicrules($rulesArray, $brandId = 0){

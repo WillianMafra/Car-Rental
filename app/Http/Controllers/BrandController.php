@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BrandController extends Controller
 {
@@ -29,12 +30,25 @@ class BrandController extends Controller
      */
     public function store(Request $request)
     {
+
+
+        
         // Validating the data
         $request->validate($this->brand->rules());
 
+        // Saving the file
+        $image = $request->file('image');
+        $imageUrn = $image->store('images', 'public');
+
+        $data = [
+            'name' => $request->get('name'),
+            'image' => $imageUrn
+        ];
+
         // store the new brand
         $newBrand = new Brand();
-        $newBrand->fill($request->all());
+
+        $newBrand->fill($data);
         $newBrand->save();
 
         return response()->json(['msg' => "Brand $request->name created successfully"], 200);
@@ -64,11 +78,11 @@ class BrandController extends Controller
     {
 
         $brand = $this->brand->find($brandId);
-         // If the resource was not found, return with 404 and a error msg
+
+        // If the resource was not found, return with 404 and a error msg
         if($brand === null){
             return response()->json(['Error' =>'Brand not found'], 404);
         }
-
         // If the method is PATCH, we need to validete only the data was send
         if($request->method() === 'PATCH'){
             $dynamicRules = [];
@@ -84,8 +98,30 @@ class BrandController extends Controller
             $request->validate($this->brand->rules($brandId));
         }
 
+        $data = [
+            'name' => $request->get('name')
+        ];
+
+        if($request->get('image')){
+        // Saving the file
+            $image = $request->file('image');
+            $imageUrn = $image->store('images', 'public');
+
+            if($imageUrn != ''){
+                Storage::disk('public')->delete($brand->image);
+            }
+
+            $data = [
+                'name' => $request->get('name'),
+                'image' => $imageUrn
+            ];
+    
+        }
+
+
+
         // If the resource was found, updade the resource and return with 200
-        $brand->update($request->all());
+        $brand->update($data);
         return response()->json(['msg' => "Brand updated successfully"], 200);
     }
 
@@ -100,6 +136,8 @@ class BrandController extends Controller
         if($brand === null){
             return response()->json(['Error' =>'Brand not found'], 404);
         }
+
+        Storage::disk('public')->delete($brand->image);
 
         // If the resource was found,delete the resource and return with 200
         $this->brand->destroy($brandId);
