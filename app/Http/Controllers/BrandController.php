@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\carModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,7 +21,7 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = $this->brand->all();
+        $brands = $this->brand->with('carModel')->get();
         return $brands;
     }
 
@@ -57,7 +58,7 @@ class BrandController extends Controller
      */
     public function show($brandId)
     {
-        $brand = $this->brand->find($brandId);
+        $brand = $this->brand->with('carModel')->find($brandId);
         
         // If the resource was not found, return with 404 and a error msg
         if($brand === null){
@@ -96,9 +97,7 @@ class BrandController extends Controller
             $request->validate($this->brand->rules($brandId));
         }
 
-        $data = [
-            'name' => $request->get('name')
-        ];
+        $brand->fill($request->all());
 
         if($request->get('image')){
         // Saving the file
@@ -109,17 +108,12 @@ class BrandController extends Controller
                 Storage::disk('public')->delete($brand->image);
             }
 
-            $data = [
-                'name' => $request->get('name'),
-                'image' => $imageUrn
-            ];
+            $brand->image = $imageUrn;
     
         }
 
-
-
         // If the resource was found, updade the resource and return with 200
-        $brand->update($data);
+        $brand->save();
         return response()->json(['msg' => "Brand updated successfully"], 200);
     }
 

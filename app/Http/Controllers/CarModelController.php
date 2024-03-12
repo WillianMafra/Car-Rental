@@ -20,7 +20,7 @@ class CarModelController extends Controller
      */
     public function index()
     {
-        $carModels = $this->carModel->all();
+        $carModels = $this->carModel->with('brand')->get();
         return $carModels;
     }
 
@@ -60,7 +60,7 @@ class CarModelController extends Controller
      */
     public function show($carModelId)
     {
-        $carModel = $this->carModel->find($carModelId);
+        $carModel = $this->carModel->with('brand')->find($carModelId);
         
         // If the resource was not found, return with 404 and a error msg
         if($carModel === null){
@@ -97,14 +97,7 @@ class CarModelController extends Controller
             $request->validate($this->carModel->rules($carModelId));
         }
 
-        $data = [
-            'name' => $request->get('name'),
-            'brand_id' => $request->get('brand_id'),
-            'doors' => $request->get('doors'),
-            'seats' => $request->get('seats'),
-            'abs' => $request->get('abs'),
-            'air_bag' => $request->get('air_bag')
-        ];
+        $carModel->fill($request->all());
 
         if($request->get('image')){
         // Saving the file
@@ -115,13 +108,11 @@ class CarModelController extends Controller
                 Storage::disk('public')->delete($carModel->image);
             }
 
-            $data['image'] = $imageUrn;
+            $carModel->image = $imageUrn;
         }
 
-
-
         // If the resource was found, updade the resource and return with 200
-        $carModel->update($data);
+        $carModel->save();
         return response()->json(['msg' => "Car Model updated successfully"], 200);
     }
 
