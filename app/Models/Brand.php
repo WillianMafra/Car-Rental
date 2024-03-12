@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\Rule;
+use App\Models\carModel;
 
 class Brand extends Model
 {
@@ -27,5 +29,9 @@ class Brand extends Model
             Rule::unique('brands')->ignore($brandId)];
         }
         return $rulesArray;
+    }
+
+    public function carModel(): HasMany {
+        return $this->hasMany(carModel::class);
     }
 }
