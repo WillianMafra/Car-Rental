@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\carModel;
+use App\Repositories\carModelRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,10 +19,31 @@ class CarModelController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $carModels = $this->carModel->with('brand')->get();
-        return $carModels;
+
+        $carModelRepository = new carModelRepository($this->carModel);
+
+        // If the user specified the brand columns
+        if($request->has('brand_columns') && $request->brand_columns != ''){
+            $columns = 'brand:id,'.$request->brand_columns;
+            $carModelRepository->selectRelationatedColumns($columns);
+        } else {
+            $carModelRepository->selectRelationatedColumns('brand');                
+        }
+
+        // If the user specified the columns
+        if($request->has('columns') && $request->columns != ''){
+            $columns = 'id,brand_id,'.$request->columns;
+            $carModelRepository->selectColumns($columns);  
+        }
+        
+        // Use filter=name:=:carmodel;doors:=:4
+        if($request->has('filter') && $request->filter != ''){
+            $carModelRepository->filter($request->filter);
+        }
+
+        return $carModelRepository->getResults();
     }
 
 

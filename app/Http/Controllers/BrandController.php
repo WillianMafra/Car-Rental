@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
-use App\Models\carModel;
+use App\Repositories\brandRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,19 +12,46 @@ class BrandController extends Controller
 
     // To debug in POSTMAN, set in Header Accept => application/json
     public $brand;
+
     public function __construct(Brand $brand)
     {
         $this->brand = $brand;   
     }
+    
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $brands = $this->brand->with('carModel')->get();
-        return $brands;
-    }
+        $brandRepository = new brandRepository($this->brand);
 
+        if($request->has('carmodel_columns') && $request->carmodel_columns != '')
+        {
+            $columns = 'carModel:id,brand_id,'.$request->carmodel_columns;
+            $brandRepository->selectRelationatedColumns($columns); 
+        } else 
+        {
+            $brandRepository->selectRelationatedColumns('CarModel');
+        }
+
+        // If the user specified the columns
+        if($request->has('columns') && $request->columns != '')
+        {
+            $columns = $request->columns;
+            $brandRepository->selectColumns($columns);
+        }
+
+        // Use filter=name:=:brand;doors:=:4
+        if($request->has('filter') && $request->filter != ''){
+            $filters = explode(';',$request->filter);
+            foreach($filters as $key => $value){
+                $condition = explode(':', $value);
+                $brandRepository->filter($condition[0], $condition[1], $condition[2]);
+            }
+        }
+
+        return $brandRepository->getResults();
+    }
 
     /**
      * Store a newly created resource in storage.
