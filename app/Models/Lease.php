@@ -4,8 +4,49 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Car;
+use App\Models\Costumer;
 
 class Lease extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'costumer_id',
+        'car_id',
+        'start_date',
+        'expected_end_date',
+        'actual_end_date',
+        'daily_rate',
+        'initial_km',
+        'final_km',
+    ];
+
+    public function rules(){
+        return  [
+            'costumer_id' => 'exists:costumers,id',
+            'car_id' => 'exists:cars,id|integer',
+            'start_date' => 'required|date',
+            'expected_end_date' => 'required|date',
+            'actual_end_date' => 'required|date',
+            'daily_rate' => 'required|numeric',
+            'initial_km' => 'required|integer',
+            'final_km' => 'required|integer'
+        ];
+    }
+
+    public function dynamicrules($rulesArray){
+        // Setting dynamic rules for validation   
+        return $rulesArray;
+   }
+
+    public function car(): BelongsTo {
+        return $this->belongsTo(Car::class);
+    }
+
+    public function costumer(): BelongsTo {
+        return $this->belongsTo(Costumer::class);
+    }
+ 
 }

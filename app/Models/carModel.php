@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\Rule;
 use App\Models\Brand;
-
+use App\Models\Car;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class carModel extends Model
 {
@@ -42,16 +43,11 @@ class carModel extends Model
         ];
     }
 
-    public function dynamicrules($rulesArray, $carModelId = 0){
-        // Setting dynamic rules for validation   
-       if(isset($rulesArray['name'])){
-           $rulesArray['name'] = ['required',
-           Rule::unique('car_models')->ignore($carModelId)];
-       }
-       return $rulesArray;
-   }
-
     public function brand(): BelongsTo {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function car(): HasMany {
+        return $this->hasMany(Car::class);
     }
 }
