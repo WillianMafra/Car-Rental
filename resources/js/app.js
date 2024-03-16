@@ -17,8 +17,20 @@ const app = createApp({});
 
 import ExampleComponent from './components/ExampleComponent.vue';
 import LoginComponent from './components/Login.vue';
+import HomeComponent from './components/Home.vue';
+import BrandsComponent from './components/Brands.vue';
+import InputComponent from './components/Input.vue';
+import TableComponent from './components/Table.vue';
+import CardComponent from './components/Card.vue';
+import ModalComponent from './components/Modal.vue';
 app.component('example-component', ExampleComponent);
 app.component('login-component', LoginComponent);
+app.component('home-component', HomeComponent);
+app.component('brands-component', BrandsComponent);
+app.component('table-component', TableComponent);
+app.component('input-component', InputComponent);
+app.component('card-component', CardComponent);
+app.component('modal-component', ModalComponent);
 
 /**
  * The following block of code may be used to automatically register your
