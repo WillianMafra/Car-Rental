@@ -4,6 +4,7 @@
         <thead>
           <tr>
             <th v-for="(header, key) in tableHeaders" :key="key" class="text-uppercase" scope="col">{{ header.title }}</th>
+            <th v-if=" deleteButton.visible || showButton.visible || editButton"></th>
           </tr>
         </thead>
         <tbody>
@@ -18,6 +19,11 @@
                 </template>
               </template>
             </td>
+            <td v-if=" deleteButton || showButton.visible || editButton">
+              <button :data-bs-toggle="showButton.toggle" :data-bs-target="showButton.target" v-if="showButton.visible" class="btn btn-outline-primary btn-sm" @click="setStore(row)">Show</button>
+              <button v-if="editButton" class="btn btn-outline-secondary btn-sm">Edit</button>
+              <button :data-bs-toggle="deleteButton.toggle" :data-bs-target="deleteButton.target" v-if="deleteButton.visible" class="btn btn-outline-danger btn-sm" @click="setStore(row)">Delete</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -26,7 +32,12 @@
   
   <script>
   export default {
-    props: ['data', 'tableHeaders']
+    props: ['data', 'tableHeaders', 'deleteButton', 'showButton', 'editButton'],
+    methods: {
+      setStore(object){
+        this.$store.state.item = object 
+      }
+    }
   };
   </script>
   

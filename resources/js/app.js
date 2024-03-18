@@ -5,35 +5,53 @@
  */
 
 import './bootstrap';
-import { createApp } from 'vue';
+import { createApp } from 'vue'
+import { createStore } from 'vuex'
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
  * registering components with the application instance so they are ready
  * to use in your application's views. An example is included for you.
  */
-
+// Cria uma nova instância do store.
+const store = createStore({
+    state () {
+      return {
+        item: {}
+      }
+    }
+  })
 const app = createApp({});
+app.use(store)
 
 import ExampleComponent from './components/ExampleComponent.vue';
-import LoginComponent from './components/Login.vue';
-import HomeComponent from './components/Home.vue';
-import BrandsComponent from './components/Brands.vue';
-import InputComponent from './components/Input.vue';
-import TableComponent from './components/Table.vue';
-import CardComponent from './components/Card.vue';
-import ModalComponent from './components/Modal.vue';
-import AlertComponent from './components/Alert.vue';
-import PaginateComponet from './components/Paginate.vue';
 app.component('example-component', ExampleComponent);
+
+import LoginComponent from './components/Login.vue';
 app.component('login-component', LoginComponent);
+
+import HomeComponent from './components/Home.vue';
 app.component('home-component', HomeComponent);
+
+import BrandsComponent from './components/Brands.vue';
 app.component('brands-component', BrandsComponent);
-app.component('table-component', TableComponent);
+
+import InputComponent from './components/Input.vue';
 app.component('input-component', InputComponent);
+
+import TableComponent from './components/Table.vue';
+app.component('table-component', TableComponent);
+
+import CardComponent from './components/Card.vue';
 app.component('card-component', CardComponent);
+
+import ModalComponent from './components/Modal.vue';
 app.component('modal-component', ModalComponent);
+
+import AlertComponent from './components/Alert.vue';
 app.component('alert-component', AlertComponent);
+
+import PaginateComponet from './components/Paginate.vue';
 app.component('paginate-component', PaginateComponet);
 
 /**
