@@ -26,6 +26,17 @@
                     <div class="card-body">
                         <table-component 
                             :data="brands.data" 
+                            :deleteButton="{
+                                visible: true,
+                                toggle: 'modal',
+                                target: '#deleteBrandModal'
+                            }"
+                            :showButton="{
+                                visible: true,
+                                toggle: 'modal',
+                                target: '#showBrandModal'
+                            }"
+                            :editButton="true"
                             :tableHeaders="{
                                 id: { title: 'id', type: 'text' },
                                 name: { title: 'name', type: 'text' },
@@ -48,7 +59,7 @@
                 </div>
             </div>
         </div>
-<!-- Modal -->
+        <!-- Add Modal -->
         <modal-component id="brandModal" title="New Brand">
             <template v-slot:alerts>
                 <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
@@ -67,6 +78,50 @@
             <template v-slot:modal-footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" @click="saveImage()">Save changes</button>
+            </template>
+        </modal-component>
+
+        <!-- Show Modal -->
+        <modal-component id="showBrandModal" title="Show Brand">
+            <template v-slot:alerts>
+                <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
+                <alert-component :title="'Error'" :details="returnDetails" v-if="returnStatus == 'error'" type="danger"></alert-component>
+            </template>
+            <template v-slot:content>
+                <input-component title="ID">
+                    <input disabled type="text" :value="$store.state.item.id" class="form-control">
+                </input-component>
+                <input-component title="Name">
+                    <input disabled type="text" :value="$store.state.item.name" class="form-control" >
+                </input-component>
+                <input-component title="Image" >
+                    <img v-if="$store.state.item.image" :src="'/storage/' + $store.state.item.image" alt="Image" class="img-fluid" style="margin: 0 0 0 1%;" >
+                </input-component>
+                <input-component title="Name">
+                    <input disabled type="text" :value="$store.state.item.name" class="form-control" >
+                </input-component>
+            </template>
+            <template v-slot:modal-footer>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </template>
+        </modal-component>
+         <!-- Delete Modal -->
+         <modal-component id="deleteBrandModal" title="Delete Brand">
+            <template v-slot:alerts>
+                <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
+                <alert-component :title="'Error'" :details="returnDetails" v-if="returnStatus == 'error'" type="danger"></alert-component>
+            </template>
+            <template v-slot:content>
+                <input-component title="ID">
+                    <input disabled type="text" :value="$store.state.item.id" class="form-control">
+                </input-component>
+                <input-component title="Name">
+                    <input disabled type="text" :value="$store.state.item.name" class="form-control" >
+                </input-component>
+            </template>
+            <template v-slot:modal-footer>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteBrand()">Delete</button>
             </template>
         </modal-component>
     </div>
@@ -167,6 +222,25 @@
                         this.filterUrl = '';
                     }
                     this.loadList();
+                },
+                deleteBrand(){
+                    let formData = new FormData();
+                    formData.append('_method', 'delete');
+                    let config = {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+                    let url = this.baseUrl + '/' +this.$store.state.item.id
+                    axios.post(url, formData, config)
+                    .then(response => {
+                        console.log(response);
+                        this.loadList();
+                    })
+                    .catch(errors => {
+                        console.log(errors);
+                    })
                 }
             },
             mounted() {
