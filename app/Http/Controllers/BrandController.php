@@ -43,14 +43,10 @@ class BrandController extends Controller
 
         // Use filter=name:=:brand;doors:=:4
         if($request->has('filter') && $request->filter != ''){
-            $filters = explode(';',$request->filter);
-            foreach($filters as $key => $value){
-                $condition = explode(':', $value);
-                $brandRepository->filter($condition[0], $condition[1], $condition[2]);
-            }
+            $brandRepository->filter($request->filter);
         }
 
-        return $brandRepository->getResults();
+        return $brandRepository->getPaginatedResults(2);
     }
 
     /**
