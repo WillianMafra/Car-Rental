@@ -1,39 +1,32 @@
 <template>
-    <table class="table table-hover">
+    <div>
+      <table class="table table-hover">
         <thead>
-            <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-            </tr>
+          <tr>
+            <th v-for="(header, key) in tableHeaders" :key="key" class="text-uppercase" scope="col">{{ header.title }}</th>
+          </tr>
         </thead>
         <tbody>
-            <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            </tr>
-            <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            </tr>
-            <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
-            </tr>
+          <tr v-for="row in data" :key="row.id">
+            <td v-for="(column, key) in tableHeaders" :key="key">
+              <template v-if="row.hasOwnProperty(key)">
+                <template v-if="column.type === 'image'">
+                  <img :src="'/storage/' + row[key]">
+                </template>
+                <template v-else>
+                  {{ row[key] }}
+                </template>
+              </template>
+            </td>
+          </tr>
         </tbody>
-    </table>
-</template>
-
-<script>
-    export default {
-        mounted() {
-            console.log('Component mounted.')
-        }
-    }
-</script>
+      </table>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    props: ['data', 'tableHeaders']
+  };
+  </script>
+  

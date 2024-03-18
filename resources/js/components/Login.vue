@@ -77,7 +77,6 @@
                 .then(data => {
                         if(data.access_token != '') {
                             document.cookie = 'token='+data.access_token+';SameSite=Lax'
-                            document.cookie = data.access_token
                         }
                         e.target.submit();
                     }
