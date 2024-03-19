@@ -43,6 +43,15 @@ class carModel extends Model
         ];
     }
 
+    public function dynamicrules($rulesArray, $carModelId = 0){
+        // Setting dynamic rules for validation   
+       if(isset($rulesArray['name'])){
+           $rulesArray['name'] = ['required',
+           Rule::unique('car_models')->ignore($carModelId)];
+       }
+       return $rulesArray;
+   }
+
     public function brand(): BelongsTo {
         return $this->belongsTo(Brand::class);
     }

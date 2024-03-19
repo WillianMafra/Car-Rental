@@ -30,7 +30,7 @@ class carController extends Controller
             $carRepository->selectRelationatedColumns($columns); 
         } else 
         {
-            $carRepository->selectRelationatedColumns('CarModel');
+            $carRepository->selectRelationatedColumns('CarModel.brand');
         }
 
         // If the user specified the columns
@@ -49,7 +49,7 @@ class carController extends Controller
             }
         }
 
-        return $carRepository->getResults();
+        return $carRepository->getPaginatedResults(2);
     }
 
     /**

@@ -9,7 +9,8 @@
      export default {
         props: [
             'id',
-            'title'
+            'title',
+            'selectedId'
         ]
     }
  </script>

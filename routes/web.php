@@ -22,7 +22,17 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
 
-Route::get('/brands', function(){
-    return view('brands');
-})->middleware('auth')->name('brands');
 
+Route::middleware('auth')->group(function (){
+    Route::get('/brands', function(){
+        return view('brands');
+    })->name('brands');
+
+    Route::get('/cars', function(){
+        return view('cars');
+    })->name('cars');
+
+    Route::get('/car-model', function(){
+        return view('car-models');
+    })->name('car-model');
+});
