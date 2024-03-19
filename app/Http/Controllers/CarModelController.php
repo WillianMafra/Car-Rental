@@ -43,7 +43,7 @@ class CarModelController extends Controller
             $carModelRepository->filter($request->filter);
         }
 
-        return $carModelRepository->getResults();
+        return $carModelRepository->getPaginatedResults(3);
     }
 
 
@@ -99,7 +99,6 @@ class CarModelController extends Controller
     public function update(Request $request, $carModelId)
     {
         $carModel = $this->carModel->find($carModelId);
-
         // If the resource was not found, return with 404 and a error msg
         if($carModel === null){
             return response()->json(['Error' =>'Car Model not found'], 404);
@@ -107,7 +106,6 @@ class CarModelController extends Controller
         // If the method is PATCH, we need to validate only the data that was sent
         if($request->method() === 'PATCH'){
             $dynamicRules = [];
-
             foreach($carModel->rules() as $input => $rule){
                 if(array_key_exists($input, $request->all())){
                     $dynamicRules[$input] = $rule;
@@ -121,7 +119,7 @@ class CarModelController extends Controller
 
         $carModel->fill($request->all());
 
-        if($request->get('image')){
+        if($request->file('image')){
         // Saving the file
             $image = $request->file('image');
             $imageUrn = $image->store('images', 'public');

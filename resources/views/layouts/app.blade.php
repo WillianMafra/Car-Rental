@@ -21,7 +21,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name', 'Car Rental') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -44,8 +44,8 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
                                     <li><a class="dropdown-item" href="{{ route('brands') }}">Brands</a></li>
-                                    <li><a class="dropdown-item" href="#">Cars</a></li>
-                                    <li><a class="dropdown-item" href="#">Car Models</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('cars') }}">Cars</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('car-model') }}">Car Models</a></li>
                                 </ul>
                             </li>
                         @endauth

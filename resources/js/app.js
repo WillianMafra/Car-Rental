@@ -8,6 +8,7 @@ import './bootstrap';
 import { createApp } from 'vue'
 import { createStore } from 'vuex'
 
+
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
  * registering components with the application instance so they are ready
@@ -57,6 +58,21 @@ app.component('alert-component', AlertComponent);
 
 import PaginateComponet from './components/Paginate.vue';
 app.component('paginate-component', PaginateComponet);
+
+import CarModelComponent from './components/CarModels.vue';
+app.component('car-models-component', CarModelComponent);
+
+import SelectComponent from './components/Select.vue';
+app.component('select-component', SelectComponent);
+
+import CheckboxComponent from './components/Checkbox.vue';
+app.component('checkbox-component', CheckboxComponent);
+
+import CarComponent from './components/Car.vue';
+app.component('car-component', CarComponent);
+
+import trueFalseIcons from './components/TrueFalseIcons.vue';
+app.component('true-false-icons-component', trueFalseIcons);
 
 /**
  * The following block of code may be used to automatically register your

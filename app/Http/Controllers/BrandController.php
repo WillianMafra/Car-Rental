@@ -121,11 +121,10 @@ class BrandController extends Controller
         }
 
         $brand->fill($request->all());
-        if($request->get('image') && $request->get('image') != ''){
+        if($request->file('image') && $request->file('image')!= ''){
         // Saving the file
             $image = $request->file('image');
             $imageUrn = $image->store('images', 'public');
-
             if($imageUrn != ''){
                 Storage::disk('public')->delete($brand->image);
             }
