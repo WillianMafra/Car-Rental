@@ -4,7 +4,7 @@
         <thead>
           <tr>
             <th v-for="(header, key) in tableHeaders" :key="key" class="text-uppercase" scope="col">{{ header.title }}</th>
-            <th v-if=" deleteButton.visible || showButton.visible || editButton"></th>
+            <th v-if=" deleteButton.visible || showButton.visible || editButton.visible"></th>
           </tr>
         </thead>
         <tbody>
@@ -21,7 +21,7 @@
             </td>
             <td v-if=" deleteButton || showButton.visible || editButton">
               <button :data-bs-toggle="showButton.toggle" :data-bs-target="showButton.target" v-if="showButton.visible" class="btn btn-outline-primary btn-sm" @click="setStore(row)">Show</button>
-              <button v-if="editButton" class="btn btn-outline-secondary btn-sm">Edit</button>
+              <button :data-bs-toggle="editButton.toggle" :data-bs-target="editButton.target" v-if="editButton.visible" class="btn btn-outline-secondary btn-sm" @click="setStore(row)">Edit</button>
               <button :data-bs-toggle="deleteButton.toggle" :data-bs-target="deleteButton.target" v-if="deleteButton.visible" class="btn btn-outline-danger btn-sm" @click="setStore(row)">Delete</button>
             </td>
           </tr>

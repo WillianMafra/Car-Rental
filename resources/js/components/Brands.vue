@@ -36,7 +36,11 @@
                                 toggle: 'modal',
                                 target: '#showBrandModal'
                             }"
-                            :editButton="true"
+                            :editButton="{
+                                visible: true,
+                                toggle: 'modal',
+                                target: '#editBrandModal'
+                            }"
                             :tableHeaders="{
                                 id: { title: 'id', type: 'text' },
                                 name: { title: 'name', type: 'text' },
@@ -61,9 +65,10 @@
         </div>
         <!-- Add Modal -->
         <modal-component id="brandModal" title="New Brand">
+
             <template v-slot:alerts>
-                <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
-                <alert-component :title="'Error'" :details="returnDetails" v-if="returnStatus == 'error'" type="danger"></alert-component>
+                <alert-component :title="'Success'" :returnStatus="returnStatus" v-if="returnStatus == 'success'"  type="success"></alert-component>
+                <alert-component :title="'Error'" :returnStatus="returnStatus" v-if="returnStatus == 'error'" type="danger"></alert-component>
             </template>
             <template v-slot:content>
                 <div class="form-group">
@@ -77,16 +82,12 @@
             </template>
             <template v-slot:modal-footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" @click="saveImage()">Save changes</button>
+                <button type="button" class="btn btn-primary" @click="saveBrand()">Save changes</button>
             </template>
         </modal-component>
 
         <!-- Show Modal -->
         <modal-component id="showBrandModal" title="Show Brand">
-            <template v-slot:alerts>
-                <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
-                <alert-component :title="'Error'" :details="returnDetails" v-if="returnStatus == 'error'" type="danger"></alert-component>
-            </template>
             <template v-slot:content>
                 <input-component title="ID">
                     <input disabled type="text" :value="$store.state.item.id" class="form-control">
@@ -108,8 +109,8 @@
          <!-- Delete Modal -->
          <modal-component id="deleteBrandModal" title="Delete Brand">
             <template v-slot:alerts>
-                <alert-component :title="'Success'" :details="returnDetails" v-if="returnStatus == 'success'"  type="success"></alert-component>
-                <alert-component :title="'Error'" :details="returnDetails" v-if="returnStatus == 'error'" type="danger"></alert-component>
+                <alert-component :title="'Success'" :details="returnDetails" v-if="$store.state.transaction.status == 'success'"  type="success"></alert-component>
+                <alert-component :title="'Error'" :details="returnDetails" v-if="$store.state.transaction.status == 'error'" type="danger"></alert-component>
             </template>
             <template v-slot:content>
                 <input-component title="ID">
@@ -124,9 +125,33 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteBrand()">Delete</button>
             </template>
         </modal-component>
+
+        <!-- Edit Modal -->
+        <modal-component id="editBrandModal" title="Edit Brand">
+        <template v-slot:alerts>
+            <!-- <alert-component :title="'Success'" :returnStatus="returnStatus" v-if="returnStatus == 'success'"  type="success"></alert-component>
+            <alert-component :title="'Error'" :returnStatus="returnStatus" v-if="returnStatus == 'error'" type="danger"></alert-component> -->
+        </template>
+        <template v-slot:content>
+            <div class="form-group">
+                <input-component title="New Brand Name" id="inputEditBrandName" >
+                    <input type="text" class="form-control" id="inputEditBrandName" v-model="$store.state.item.name">
+                </input-component>
+                <input-component title="New Image" id="inputEditBrandImage">
+                    <input type="file" class="form-control" id="inputeditBrandImage" @change="loadImage($event)">
+                </input-component>
+            </div>
+        </template>
+        <template v-slot:modal-footer>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="updateBrand()">Update</button>
+        </template>
+        </modal-component>
     </div>
 </template>
 <script>
+import { storeKey } from 'vuex';
+
     export default {
         computed: {
             token() {
@@ -146,7 +171,6 @@
                 brandName: '',
                 imageFile: [],
                 returnStatus: '',
-                returnDetails: '',
                 brands: [],
                 filters: { id: '', name: ''},
                 paginationUrl: '',
@@ -159,9 +183,8 @@
                     this.imageFile = Array.from(e.target.files);
                 },
 
-                saveImage()
+                saveBrand()
                 {
-
                     let formData = new FormData();
                     formData.append('name', this.brandName);
                     formData.append('image', this.imageFile[0]);
@@ -174,14 +197,13 @@
                     }
                     axios.post(this.baseUrl, formData, config)
                     .then(response => {
-                        this.returnStatus = 'success';
-                        this.returnDetails = response
+                        this.returnStatus = 'success'
+                        this.$store.state.transaction.message = response.data.msg
                         this.loadList();
                     })
                     .catch(errors => {
-                        console.log('Erro na requisição:', errors);
-                        this.returnStatus = 'error';
-                        this.returnDetails = errors.response;
+                        this.returnStatus = 'error'
+                        this.$store.state.transaction.message = errors.response.data.errors
                     })
                 },
                 loadList() {
@@ -235,8 +257,34 @@
                     let url = this.baseUrl + '/' +this.$store.state.item.id
                     axios.post(url, formData, config)
                     .then(response => {
+                        this.loadList();
+                    })
+                    .catch(errors => {
+                        this.$store.state.transaction.status = 'success'
+                        this.$store.state.transaction.message = errors
+                    })
+                },
+                updateBrand(){
+                    let url = this.baseUrl + '/' + this.$store.state.item.id
+
+                    let formData = new FormData();
+                    formData.append('_method', 'patch');
+                    if(this.imageFile[0]){
+                        formData.append('image', this.imageFile[0]);
+                    }
+                    formData.append('name', this.$store.state.item.name);
+                    let config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+                    axios.post(url, formData, config)
+                    .then(response => {
                         console.log(response);
                         this.loadList();
+                        inputEditBrandImage.value = '';
                     })
                     .catch(errors => {
                         console.log(errors);

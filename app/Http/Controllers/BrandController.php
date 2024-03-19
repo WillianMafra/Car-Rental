@@ -121,8 +121,7 @@ class BrandController extends Controller
         }
 
         $brand->fill($request->all());
-
-        if($request->get('image')){
+        if($request->get('image') && $request->get('image') != ''){
         // Saving the file
             $image = $request->file('image');
             $imageUrn = $image->store('images', 'public');
@@ -134,7 +133,6 @@ class BrandController extends Controller
             $brand->image = $imageUrn;
     
         }
-
         // If the resource was found, updade the resource and return with 200
         $brand->save();
         return response()->json(['msg' => "Brand updated successfully"], 200);
