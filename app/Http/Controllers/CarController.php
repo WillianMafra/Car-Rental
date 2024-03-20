@@ -23,7 +23,6 @@ class carController extends Controller
     public function index(Request $request)
     {
         $carRepository = new carRepository($this->car);
-
         if($request->has('carmodel_columns') && $request->carmodel_columns != '')
         {
             $columns = 'carModel:id,'.$request->carmodel_columns;
@@ -40,16 +39,32 @@ class carController extends Controller
             $carRepository->selectColumns($columns);
         }
 
-        // Use filter=name:=:car;doors:=:4
-        if($request->has('filter') && $request->filter != ''){
-            $filters = explode(';',$request->filter);
-            foreach($filters as $key => $value){
-                $condition = explode(':', $value);
-                $carRepository->filter($condition[0], $condition[1], $condition[2]);
-            }
+        if($request->has('car_model_id') && $request->car_model_id != ''){
+            $carRepository->filter($request->car_model_id, 'car_model_id');
         }
 
-        return $carRepository->getPaginatedResults(2);
+        if($request->has('avaliable') && $request->avaliable != ''){
+            $carRepository->filter($request->avaliable, 'avaliable');
+        }
+
+        if($request->has('doors') && $request->doors != ''){
+            $carRepository->filterRelationatedColumns('CarModel',$request->doors, 'doors');
+        }
+        if($request->has('seats') && $request->seats != ''){
+            $carRepository->filterRelationatedColumns('CarModel',$request->seats, 'seats');
+        }
+        if($request->has('abs') && $request->abs != ''){
+            $carRepository->filterRelationatedColumns('CarModel',$request->abs, 'abs');
+        }
+        if($request->has('air_bag') && $request->air_bag != ''){
+            $carRepository->filterRelationatedColumns('CarModel',$request->air_bag, 'air_bag');
+        }
+        
+        if($request->has('paginate') && $request->paginate != ''){
+            return $carRepository->getPaginatedResults($request->paginate);
+        }
+
+        return $carRepository->getResults();
     }
 
     /**

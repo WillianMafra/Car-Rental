@@ -43,7 +43,11 @@ class CarModelController extends Controller
             $carModelRepository->filter($request->filter);
         }
 
-        return $carModelRepository->getPaginatedResults(3);
+        if($request->has('paginate') && $request->paginate != ''){
+            return $carModelRepository->getPaginatedResults($request->paginate);
+        }
+
+        return $carModelRepository->getResults();
     }
 
 

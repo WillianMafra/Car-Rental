@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <th v-for="(header, key) in tableHeaders" :key="key" class="text-center text-uppercase" scope="col">{{ header.title }}</th>
-          <th v-if="deleteButton.visible || showButton.visible || editButton.visible"></th>
+          <th  v-if="deleteButton.visible || showButton.visible || editButton.visible"></th>
         </tr>
       </thead>
       <tbody>

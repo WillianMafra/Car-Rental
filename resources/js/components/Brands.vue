@@ -204,7 +204,7 @@ import { storeKey } from 'vuex';
                     })
                 },
                 loadList() {
-                    let url = this.baseUrl + '?' + this.paginationUrl + this.filterUrl;
+                    let url = this.baseUrl + '?' + this.paginationUrl + this.filterUrl + '&paginate=2';
                     let config = {
                         headers: {
                             'Accept': 'application/json',
