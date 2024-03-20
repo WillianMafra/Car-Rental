@@ -24,23 +24,29 @@ class CarModelController extends Controller
 
         $carModelRepository = new carModelRepository($this->carModel);
 
-        // If the user specified the brand columns
-        if($request->has('brand_columns') && $request->brand_columns != ''){
-            $columns = 'brand:id,'.$request->brand_columns;
-            $carModelRepository->selectRelationatedColumns($columns);
-        } else {
-            $carModelRepository->selectRelationatedColumns('brand');                
-        }
-
         // If the user specified the columns
-        if($request->has('columns') && $request->columns != ''){
-            $columns = 'id,brand_id,'.$request->columns;
+        if ($request->filled('columns')) {
+            $columns = $request->columns;
             $carModelRepository->selectColumns($columns);  
         }
-        
-        // Use filter=name:=:carmodel;doors:=:4
-        if($request->has('filter') && $request->filter != ''){
-            $carModelRepository->filter($request->filter);
+
+        // Filter on car_models table
+        $filters = ['abs', 'id', 'doors', 'seats', 'airbag', 'name'];
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                $carModelRepository->filter($request->$filter, $filter);
+            }
+        }
+
+        // Filter on brands table
+        $relationatedFilters = ['brand_name'];
+        foreach ($relationatedFilters as $filter) {
+            if ($request->filled($filter)) {
+                if($filter == 'brand_name'){
+                    $filter = 'name';
+                }
+                $carModelRepository->filterRelationatedColumns('brand', $request->$filter, $filter);
+            }
         }
 
         if($request->has('paginate') && $request->paginate != ''){

@@ -32,6 +32,8 @@
                             <div class="col mb-3">
                                 <checkbox-component v-model="filters.avaliable" :title="'Avaliable'" ></checkbox-component>
                             </div>
+                            <yes-no-component></yes-no-component>
+
                         </div>
                     </template>
                     <template v-slot:footer>
