@@ -31,10 +31,12 @@
                                 </input-component>
                             </div>
                             <div class="col mb-3">
-                                <checkbox-component v-model="filters.abs" :title="'ABS'" ></checkbox-component>
+                                <!-- <checkbox-component v-model="filters.abs" :title="'ABS'" ></checkbox-component> -->
+                                <yes-no-component v-model="filters.abs" :title="'ABS'"></yes-no-component>
                             </div>
                             <div class="col mb-3">
-                                <checkbox-component v-model="filters.air_bag" :title="'Airbag'" ></checkbox-component>
+                                <yes-no-component v-model="filters.air_bag" :title="'Airbag'"></yes-no-component>
+                                <!-- <checkbox-component v-model="filters.air_bag" :title="'Airbag'" ></checkbox-component> -->
                             </div>
                         </div>
                     </template>
@@ -237,7 +239,7 @@ export default {
                     doors: '',
                     seats: '',
                     abs: false,
-                    airbag: false,
+                    air_bag: false,
                 },
                 paginationUrl: '',
                 filterUrl: '',
@@ -306,16 +308,17 @@ export default {
                 search(){
                     let filter = '';
                     for(let key in this.filters){
-                        if(this.filters[key] != ''){
-                            if(filter != ''){
-                                filter += ';';
-                            }     
-                            filter += `${key}:ilike:%${this.filters[key]}%`                            
+                        if(this.filters[key] !== ''){
+                            if(key == 'id' || key == 'airbag' || key == 'abs'){
+                                filter += `&${key}==:${this.filters[key]}`                            
+                            } else {
+                                filter += `&${key}=ilike:%${this.filters[key]}%`                            
+                            }                    
                         }
                     }
                     if(filter != ''){
                         this.paginationUrl = 'page=1'
-                        this.filterUrl = '&filter='+filter;
+                        this.filterUrl = filter;
                     } else {
                         this.filterUrl = '';
                     }

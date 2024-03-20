@@ -228,15 +228,16 @@ import { storeKey } from 'vuex';
                     let filter = '';
                     for(let key in this.filters){
                         if(this.filters[key] != ''){
-                            if(filter != ''){
-                                filter += ';';
+                            if(key == 'id'){
+                                filter += `&${key}==:${this.filters[key]}`                            
+                            } else {
+                                filter += `&${key}=ilike:%${this.filters[key]}%`                            
                             }     
-                            filter += `${key}:ilike:%${this.filters[key]}%`                            
                         }
                     }
                     if(filter != ''){
                         this.paginationUrl = 'page=1'
-                        this.filterUrl = '&filter='+filter;
+                        this.filterUrl = filter;
                     } else {
                         this.filterUrl = '';
                     }

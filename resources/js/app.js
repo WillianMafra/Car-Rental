@@ -74,6 +74,9 @@ app.component('car-component', CarComponent);
 import trueFalseIcons from './components/TrueFalseIcons.vue';
 app.component('true-false-icons-component', trueFalseIcons);
 
+import YesNoComponent from './components/YesNo.vue';
+app.component('yes-no-component', YesNoComponent);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

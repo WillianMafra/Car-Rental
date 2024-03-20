@@ -22,48 +22,40 @@ class carController extends Controller
      */
     public function index(Request $request)
     {
-        $carRepository = new carRepository($this->car);
-        if($request->has('carmodel_columns') && $request->carmodel_columns != '')
-        {
-            $columns = 'carModel:id,'.$request->carmodel_columns;
-            $carRepository->selectRelationatedColumns($columns); 
-        } else 
-        {
-            $carRepository->selectRelationatedColumns('CarModel.brand');
-        }
 
-        // If the user specified the columns
-        if($request->has('columns') && $request->columns != '')
-        {
+        $carRepository = new CarRepository($this->car);
+
+        // Select columns in car_models table
+        $carModelColumns = $request->filled('carmodel_columns') ? 'carModel:id,'.$request->carmodel_columns : 'CarModel.brand';
+        $carRepository->selectRelationatedColumns($carModelColumns);
+    
+        // Select columns in cars table
+        if ($request->filled('columns')) {
             $columns = $request->columns;
             $carRepository->selectColumns($columns);
         }
-
-        if($request->has('car_model_id') && $request->car_model_id != ''){
-            $carRepository->filter($request->car_model_id, 'car_model_id');
-        }
-
-        if($request->has('avaliable') && $request->avaliable != ''){
-            $carRepository->filter($request->avaliable, 'avaliable');
-        }
-
-        if($request->has('doors') && $request->doors != ''){
-            $carRepository->filterRelationatedColumns('CarModel',$request->doors, 'doors');
-        }
-        if($request->has('seats') && $request->seats != ''){
-            $carRepository->filterRelationatedColumns('CarModel',$request->seats, 'seats');
-        }
-        if($request->has('abs') && $request->abs != ''){
-            $carRepository->filterRelationatedColumns('CarModel',$request->abs, 'abs');
-        }
-        if($request->has('air_bag') && $request->air_bag != ''){
-            $carRepository->filterRelationatedColumns('CarModel',$request->air_bag, 'air_bag');
+    
+        // Filter on car_models table
+        $relationatedFilters = ['doors', 'seats', 'abs', 'air_bag'];
+        foreach ($relationatedFilters as $filter) {
+            if ($request->filled($filter)) {
+                $carRepository->filterRelationatedColumns('CarModel', $request->$filter, $filter);
+            }
         }
         
-        if($request->has('paginate') && $request->paginate != ''){
-            return $carRepository->getPaginatedResults($request->paginate);
+        // Filter on cars table
+        $filters = ['car_model_id', 'avaliable'];
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                $carRepository->filter($request->$filter, $filter);
+            }
         }
 
+        // Is pagination active?
+        if ($request->filled('paginate')) {
+            return $carRepository->getPaginatedResults($request->paginate);
+        }
+    
         return $carRepository->getResults();
     }
 

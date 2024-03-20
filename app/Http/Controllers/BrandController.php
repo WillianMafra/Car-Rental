@@ -25,25 +25,18 @@ class BrandController extends Controller
     {
         $brandRepository = new brandRepository($this->brand);
 
-        if($request->has('carmodel_columns') && $request->carmodel_columns != '')
-        {
-            $columns = 'carModel:id,brand_id,'.$request->carmodel_columns;
-            $brandRepository->selectRelationatedColumns($columns); 
-        } else 
-        {
-            $brandRepository->selectRelationatedColumns('CarModel');
-        }
-
         // If the user specified the columns
-        if($request->has('columns') && $request->columns != '')
-        {
+        if ($request->filled('columns')) {
             $columns = $request->columns;
             $brandRepository->selectColumns($columns);
         }
 
-        // Use filter=name:=:brand;doors:=:4
-        if($request->has('filter') && $request->filter != ''){
-            $brandRepository->filter($request->filter);
+        // Filter on cars table
+        $filters = ['name', 'id'];
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                $brandRepository->filter($request->$filter, $filter);
+            }
         }
 
         if($request->has('paginate') && $request->paginate != ''){
