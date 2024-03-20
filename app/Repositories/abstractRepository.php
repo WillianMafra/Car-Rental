@@ -21,12 +21,16 @@ abstract class abstractRepository {
         $this->model = $this->model->selectRaw($columns);
     }
 
-    public function filter($filter){
-        $filters = explode(';',$filter);
-        foreach($filters as $key => $value){
-            $condition = explode(':', $value);
-            $this->model = $this->model->where($condition[0], $condition[1], $condition[2]);
-        }
+    public function filter($filter, $column){
+        $condition = explode(':', $filter);
+        $this->model = $this->model->where($column, $condition[0], $condition[1]);
+    }
+
+    public function filterRelationatedColumns($relation, $filter, $column){
+        $condition = explode(':', $filter);
+        $this->model = $this->model->whereHas($relation, function ($query) use ($condition, $column) {
+            $query->where($column, $condition[0], $condition[1]);
+        });
     }
     
     public function getResults(){

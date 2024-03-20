@@ -11,14 +11,7 @@
                                 </input-component>
                             </div>
                             <div class="col mb-3">
-                                <input-component title="Car Model" id="inputName">
-                                    <input type="text" class="form-control" id="inputName" v-model="filters.name">
-                                </input-component>
-                            </div>
-                            <div class="col mb-3">
-                                <input-component title="Brand Name" id="inputName">
-                                    <input type="text" class="form-control" id="inputName" v-model="filters.brand_name">
-                                </input-component>
+                                <select-component :id="'car_model_id'" :title="'Car Model'" :data="car_models" v-model="filters.car_model_id"></select-component>
                             </div>
                             <div class="col mb-3">
                                 <input-component title="Doors" id="inputName">
@@ -66,13 +59,12 @@
                                 target: '#editModal'
                             }"
                             :tableHeaders="{
-                                id: { title: 'id', type: 'text' },
                                 brand: { title: 'brand', type: 'text', path: 'car_model.brand.name' },
                                 car_model_id: { title: 'Model', type: 'text', path: 'car_model.name' },
                                 plate: { title: 'plate', type: 'text' },
                                 km: { title: 'km', type: 'number' },
                                 avaliable: { title: 'avaliable', type: 'boolean' },
-                                image: { title: 'image', type: 'image', path: 'car_model.image', style:'width:150px;' },
+                                image: { title: 'image', type: 'image', path: 'car_model.image', style:'width:100px;' },
                             }">
                         </table-component>
                     </div>
@@ -116,24 +108,24 @@
         </modal-component>
 
         <!-- Show Modal -->
-        <modal-component  id="showModal" title="Show Car Model">
+        <modal-component id="showModal" title="Show Car Model">
             <template v-slot:content>
                 <input-component  class=" fw-bold mb-2" title="ID">
                     <input disabled type="text" :value="$store.state.item.id" class="form-control ">
                 </input-component>
-                <input-component  class=" fw-bold mb-2 mt-2" title="Car Model">
-                    <!-- <input disabled type="text" :value="$store.state.item.car_model.name" class="form-control " > -->
+                <input-component v-if="$store.state.item.car_model" class=" fw-bold mb-2 mt-2" title="Car Model">
+                    <input disabled type="text" :value="$store.state.item.car_model.name" class="form-control " >
                 </input-component>
-                <input-component class="  fw-bold" title="Doors">
-                    <!-- <input disabled type="text" :value="$store.state.item.car_model.doors" class="form-control " > -->
+                <input-component v-if="$store.state.item.car_model" class="  fw-bold" title="Doors">
+                    <input disabled type="text" :value="$store.state.item.car_model.doors" class="form-control " >
                 </input-component>
-                <input-component  class=" fw-bold mb-2 mt-2" title="Seats">
-                    <!-- <input disabled type="text" :value="$store.state.item.car_model.seats" class="form-control " > -->
+                <input-component v-if="$store.state.item.car_model" class=" fw-bold mb-2 mt-2" title="Seats">
+                    <input disabled type="text" :value="$store.state.item.car_model.seats" class="form-control " >
                 </input-component>
-                <!-- <true-false-icons-component class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'Airbag'" :condition="$store.state.item.car_model.air_bag"></true-false-icons-component>
-                <true-false-icons-component class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'ABS'" :condition="$store.state.item.car_model.abs"></true-false-icons-component> -->
-                <input-component  class="text-center">
-                    <img v-if="$store.state.item.image" :src="'/storage/' + $store.state.item.car_model.image" alt="Image" class="img-fluid" style="margin: 0 0 0 1%;" >
+                <true-false-icons-component v-if="$store.state.item.car_model" class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'Airbag'" :condition="$store.state.item.car_model.air_bag"></true-false-icons-component>
+                <true-false-icons-component v-if="$store.state.item.car_model" class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'ABS'" :condition="$store.state.item.car_model.abs"></true-false-icons-component>
+                <input-component v-if="$store.state.item.image" class="text-center">
+                    <img  :src="'/storage/' + $store.state.item.car_model.image" alt="Image" class="img-fluid" style="margin: 0 0 0 1%;" >
                 </input-component>
             </template>
             <template v-slot:modal-footer>
@@ -146,12 +138,15 @@
                 <alert-component :title="'Success'" :details="returnDetails" v-if="$store.state.transaction.status == 'success'"  type="success"></alert-component>
                 <alert-component :title="'Error'" :details="returnDetails" v-if="$store.state.transaction.status == 'error'" type="danger"></alert-component>
             </template>
-            <template v-slot:content>
+            <template v-if="$store.state.item.car_model" v-slot:content>
                 <input-component title="ID">
                     <input disabled type="text" :value="$store.state.item.id" class="form-control">
                 </input-component>
                 <input-component title="Name">
-                    <input disabled type="text" :value="$store.state.item.name" class="form-control" >
+                    <input disabled type="text" :value="$store.state.item.car_model.name" class="form-control" >
+                </input-component>
+                <input-component title="Plate">
+                    <input disabled type="text" :value="$store.state.item.plate" class="form-control" >
                 </input-component>
             </template>
             <template v-slot:modal-footer>
@@ -161,30 +156,20 @@
         </modal-component>
 
         <!-- Edit Modal -->
-        <modal-component id="editModal" title="Edit Car Model">
+        <modal-component v-if="$store.state.item.car_model"  id="editModal" title="Edit Car">
         <template v-slot:alerts>
             <alert-component :title="'Success'" v-if="this.$store.state.transaction.status == 'success'"  type="success"></alert-component>
             <alert-component :title="'Error'" v-if="this.$store.state.transaction.status == 'error'" type="danger"></alert-component>
         </template>
         <template v-slot:content>
-            <input-component  class=" fw-bold mb-2" title="ID">
-                <input type="text" v-model="$store.state.item.id" class="form-control ">
+            <input-component  class=" fw-bold mb-2 mt-2" title="KM">
+                <input type="text" v-model="$store.state.item.km" class="form-control " >
             </input-component>
-            <input-component  class=" fw-bold mb-2 mt-2" title="Name">
-                <input type="text" v-model="$store.state.item.name" class="form-control " >
+            <select-component :id="'brand_id'" :title="'Car Model'" :data="car_models" :selectedId="$store.state.item.car_model_id" v-model="$store.state.item.car_model_id"></select-component>
+            <input-component  class=" fw-bold mb-2 mt-2" title="Plate">
+                <input type="text" v-model="$store.state.item.plate" class="form-control " >
             </input-component>
-            <select-component :id="'brand_id'" :title="'Brand'" :data="car_models" :selectedId="$store.state.item.brand_id" v-model="$store.state.item.brand_id"></select-component>
-            <input-component  class=" fw-bold mb-2 mt-2" title="Doors">
-                <input type="text" v-model="$store.state.item.doors" class="form-control " >
-            </input-component>
-            <input-component  class=" fw-bold mb-2 mt-2" title="Seats">
-                <input type="text" v-model="$store.state.item.seats" class="form-control " >
-            </input-component>
-            <checkbox-component title="Airbag" id="airbag" :checked="$store.state.item.air_bag" v-model="$store.state.item.air_bag"></checkbox-component>
-            <checkbox-component title="Abs" id="abs" :checked="$store.state.item.abs" v-model="$store.state.item.abs"></checkbox-component>
-            <input-component class=" fw-bold mb-2 mt-2" title="New Image" id="inputEditImage">
-                <input type="file" class="form-control" id="inputEditImage" @change="loadImage($event)">
-            </input-component>
+            <checkbox-component title="Avaliable" id="avaliable" :checked="$store.state.item.avaliable" v-model="$store.state.item.avaliable"></checkbox-component>
         </template>
         <template v-slot:modal-footer>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -223,12 +208,10 @@ export default {
                 cars: [],
                 filters: { 
                     id: '',
-                    name: '',
-                    brand_name: '',
                     doors: '',
                     seats: '',
                     abs: false,
-                    airbag: false,
+                    air_bag: false,
                 },
                 paginationUrl: '',
                 filterUrl: '',
@@ -272,7 +255,7 @@ export default {
                     })
                 },
                 loadList() {
-                    let url = this.baseUrl + '/car?' + this.paginationUrl + this.filterUrl;
+                    let url = this.baseUrl + '/car?' + this.paginationUrl + this.filterUrl + '&paginate=2';
                     let config = {
                         headers: {
                             'Accept': 'application/json',
@@ -295,16 +278,19 @@ export default {
                 search(){
                     let filter = '';
                     for(let key in this.filters){
-                        if(this.filters[key] != ''){
-                            if(filter != ''){
-                                filter += ';';
-                            }     
-                            filter += `${key}:ilike:%${this.filters[key]}%`                            
+                        if(this.filters[key] !== ''){
+                            if(key == 'abs' || key == 'air_bag' || key == 'avaliable'){
+                                filter += `&${key}==:${this.filters[key] == true ? 1 : 0}`                            
+                            } else if(key == 'car_model_id' || key == 'doors' || key == 'seats') {
+                                filter += `&${key}==:${this.filters[key]}`                            
+                            } else {
+                                filter += `&${key}:ilike:%${this.filters[key]}%`                            
+                            }
                         }
                     }
                     if(filter != ''){
                         this.paginationUrl = 'page=1'
-                        this.filterUrl = '&filter='+filter;
+                        this.filterUrl = filter;
                     } else {
                         this.filterUrl = '';
                     }
@@ -334,11 +320,10 @@ export default {
 
                     let formData = new FormData();
                     formData.append('_method', 'patch');
-                    formData.append('plate', this.newCar.plate);
-                    formData.append('km', this.newCar.km);
-                    formData.append('seats', this.newCar.seats);
-                    formData.append('car_model_id', this.newCar.car_model_id);
-                    formData.append('avaliable', this.newCar.avaliable === true ? 1 : 0);
+                    formData.append('plate', this.$store.state.item.plate);
+                    formData.append('km', this.$store.state.item.km);
+                    formData.append('car_model_id',this.$store.state.item.car_model_id);
+                    formData.append('avaliable', this.$store.state.item.avaliable === true ? 1 : 0);
 
                     let config = {
                         headers: {

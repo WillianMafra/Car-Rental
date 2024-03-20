@@ -65,7 +65,7 @@
                             :tableHeaders="{
                                 id: { title: 'id', type: 'text' },
                                 name: { title: 'name', type: 'text' },
-                                image: { title: 'image', type: 'image', style: 'width: 150px; height:150px' },
+                                image: { title: 'image', type: 'image', style: 'width: 100px; height:100px' },
                                 seats: { title: 'seats', type: 'number' },
                                 doors: { title: 'doors', type: 'number' },
                                 abs: { title: 'abs', type: 'boolean' },
@@ -82,7 +82,7 @@
                             </ul>
                         </paginate-component>
                         <div style="margin-top: 0.5%;" class="col-1">
-                            <button type="submit" class="btn btn-primary btn-sm" height="15px" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+                            <button type="submit" class="btn btn-primary btn-sm" height="15px" data-bs-toggle="modal" data-bs-target="#addModal" @click="clearTransaction()">Add</button>
                         </div>
                     </div>
                 </div>
@@ -283,7 +283,7 @@ export default {
                     })
                 },
                 loadList() {
-                    let url = this.baseUrl + '/car-model?' + this.paginationUrl + this.filterUrl;
+                    let url = this.baseUrl + '/car-model?' + this.paginationUrl + this.filterUrl + '&paginate=2';
                     let config = {
                         headers: {
                             'Accept': 'application/json',
@@ -389,6 +389,11 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
+                },
+                clearTransaction(){
+                    this.$store.state.transaction.status = ''
+                    this.$store.state.transaction.message = ''
+                    this.returnStatus = ''
                 }
             },
             mounted() {

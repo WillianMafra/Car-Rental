@@ -46,7 +46,11 @@ class BrandController extends Controller
             $brandRepository->filter($request->filter);
         }
 
-        return $brandRepository->getPaginatedResults(2);
+        if($request->has('paginate') && $request->paginate != ''){
+           return $brandRepository->getPaginatedResults($request->paginate);
+        }
+
+        return $brandRepository->getResults();
     }
 
     /**

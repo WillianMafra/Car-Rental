@@ -1,8 +1,8 @@
 <template>
     <label :for="id">{{ title }}</label>
-    <select v-if="data.data !== ''" class="form-select" :id="id" :value="selectedId" @change="updateSelectedOption($event.target.value)">
+    <select v-if="data !== ''" class="form-select" :id="id" :value="modelValue" @change="updateSelectedOption($event.target.value)">
         <option value="">----</option>
-        <template v-for="value in data.data">
+        <template v-for="value in data">
             <option :value="value.id">{{ value.name}}</option>            
         </template>
     </select>
