@@ -31,7 +31,7 @@ class CarModelController extends Controller
         }
 
         // Filter on car_models table
-        $filters = ['abs', 'id', 'doors', 'seats', 'airbag', 'name'];
+        $filters = ['abs', 'id', 'doors', 'seats', 'air_bag', 'name'];
         foreach ($filters as $filter) {
             if ($request->filled($filter)) {
                 $carModelRepository->filter($request->$filter, $filter);
@@ -43,9 +43,10 @@ class CarModelController extends Controller
         foreach ($relationatedFilters as $filter) {
             if ($request->filled($filter)) {
                 if($filter == 'brand_name'){
-                    $filter = 'name';
+                    $carModelRepository->filterRelationatedColumns('brand', $request->$filter, 'name');
+                } else {
+                    $carModelRepository->filterRelationatedColumns('brand', $request->$filter, $filter);
                 }
-                $carModelRepository->filterRelationatedColumns('brand', $request->$filter, $filter);
             }
         }
 

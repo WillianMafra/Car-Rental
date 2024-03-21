@@ -6,11 +6,6 @@
                     <template v-slot:content>
                         <div class="form-row">
                             <div class="col mb-3">
-                                <input-component title="ID" id="inputId">
-                                    <input type="number" class="form-control" id="inputId" v-model="filters.id">
-                                </input-component>
-                            </div>
-                            <div class="col mb-3">
                                 <input-component title="Car Name" id="inputName">
                                     <input type="text" class="form-control" id="inputName" v-model="filters.name">
                                 </input-component>
@@ -31,12 +26,10 @@
                                 </input-component>
                             </div>
                             <div class="col mb-3">
-                                <!-- <checkbox-component v-model="filters.abs" :title="'ABS'" ></checkbox-component> -->
                                 <yes-no-component v-model="filters.abs" :title="'ABS'"></yes-no-component>
                             </div>
                             <div class="col mb-3">
                                 <yes-no-component v-model="filters.air_bag" :title="'Airbag'"></yes-no-component>
-                                <!-- <checkbox-component v-model="filters.air_bag" :title="'Airbag'" ></checkbox-component> -->
                             </div>
                         </div>
                     </template>
@@ -233,13 +226,12 @@ export default {
                 returnStatus: '',
                 cars: [],
                 filters: { 
-                    id: '',
                     name: '',
                     brand_name: '',
                     doors: '',
                     seats: '',
-                    abs: false,
-                    air_bag: false,
+                    abs: '',
+                    air_bag: '',
                 },
                 paginationUrl: '',
                 filterUrl: '',
@@ -309,7 +301,7 @@ export default {
                     let filter = '';
                     for(let key in this.filters){
                         if(this.filters[key] !== ''){
-                            if(key == 'id' || key == 'airbag' || key == 'abs'){
+                            if(key == 'air_bag' || key == 'abs'){
                                 filter += `&${key}==:${this.filters[key]}`                            
                             } else {
                                 filter += `&${key}=ilike:%${this.filters[key]}%`                            

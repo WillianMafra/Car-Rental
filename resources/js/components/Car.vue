@@ -2,14 +2,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <card-component title="Cars">
+                <card-component class="fw-bold" title="Cars">
                     <template v-slot:content>
                         <div class="form-row">
-                            <div class="col mb-3">
-                                <input-component title="ID" id="inputId">
-                                    <input type="number" class="form-control" id="inputId" v-model="filters.id">
-                                </input-component>
-                            </div>
                             <div class="col mb-3">
                                 <select-component :id="'car_model_id'" :title="'Car Model'" :data="car_models" v-model="filters.car_model_id"></select-component>
                             </div>
@@ -24,13 +19,13 @@
                                 </input-component>
                             </div>
                             <div class="col mb-3">
-                                <checkbox-component v-model="filters.abs" :title="'ABS'" ></checkbox-component>
+                                <yes-no-component  v-model="filters.abs" :title="'ABS'"></yes-no-component>
                             </div>
                             <div class="col mb-3">
-                                <checkbox-component v-model="filters.air_bag" :title="'Airbag'" ></checkbox-component>
+                                <yes-no-component  v-model="filters.air_bag" :title="'Airbag'"></yes-no-component>
                             </div>
                             <div class="col mb-3">
-                                <checkbox-component v-model="filters.avaliable" :title="'Avaliable'" ></checkbox-component>
+                                <yes-no-component  v-model="filters.avaliable" :title="'Avaliable'"></yes-no-component>
                             </div>
                             <yes-no-component></yes-no-component>
 
@@ -40,7 +35,7 @@
                         <button type="submit" class="btn btn-primary btn-sm me-md-2" @click="search()">Search</button>
                     </template>
                 </card-component>
-                <div class="card">
+                <div  class="card fw-bold">
                     <div class="card-header">Car List</div>
                     <div class="card-body">
                         <table-component 
@@ -209,11 +204,11 @@ export default {
                 returnStatus: '',
                 cars: [],
                 filters: { 
-                    id: '',
                     doors: '',
                     seats: '',
-                    abs: false,
-                    air_bag: false,
+                    abs: '',
+                    air_bag: '',
+                    avaliable: true
                 },
                 paginationUrl: '',
                 filterUrl: '',
@@ -282,7 +277,7 @@ export default {
                     for(let key in this.filters){
                         if(this.filters[key] !== ''){
                             if(key == 'abs' || key == 'air_bag' || key == 'avaliable'){
-                                filter += `&${key}==:${this.filters[key] == true ? 1 : 0}`                            
+                                filter += `&${key}==:${this.filters[key]}`                            
                             } else if(key == 'car_model_id' || key == 'doors' || key == 'seats') {
                                 filter += `&${key}==:${this.filters[key]}`                            
                             } else {

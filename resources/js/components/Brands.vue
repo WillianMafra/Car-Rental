@@ -6,11 +6,6 @@
                     <template v-slot:content>
                         <div class="form-row">
                             <div class="col mb-3">
-                                <input-component title="ID" id="inputId">
-                                    <input type="number" class="form-control" id="inputId" v-model="filters.id">
-                                </input-component>
-                            </div>
-                            <div class="col mb-3">
                                 <input-component title="Name" id="inputName">
                                     <input type="text" class="form-control" id="inputName" v-model="filters.name">
                                 </input-component>
@@ -169,7 +164,7 @@ import { storeKey } from 'vuex';
                 imageFile: [],
                 returnStatus: '',
                 brands: [],
-                filters: { id: '', name: ''},
+                filters: { name: ''},
                 paginationUrl: '',
                 filterUrl: ''
             }
@@ -228,11 +223,7 @@ import { storeKey } from 'vuex';
                     let filter = '';
                     for(let key in this.filters){
                         if(this.filters[key] != ''){
-                            if(key == 'id'){
-                                filter += `&${key}==:${this.filters[key]}`                            
-                            } else {
-                                filter += `&${key}=ilike:%${this.filters[key]}%`                            
-                            }     
+                            filter += `&${key}=ilike:%${this.filters[key]}%`                            
                         }
                     }
                     if(filter != ''){

@@ -12,8 +12,8 @@ export default {
         return {
             data: {
                 '': '---',
-                '1': 'Yes',
-                '0': 'No'
+                'true': 'Yes',
+                'false': 'No'
             }
         };
     },
