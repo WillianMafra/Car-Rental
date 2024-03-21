@@ -15,15 +15,14 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // is user 
+        // is user authenticated?
         if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-         // Verifique se o usuário tem a role desejada (no caso, "1")
-         if (auth()->user()->role != 1) {
-            // Se não tiver a role desejada, você pode retornar uma resposta 403 Forbidden ou redirecionar para uma página de acesso negado
-            return redirect()->back()->with('error', 'Unauthorized action.');        }
+         // Is user admin? (role 1)
+         if (auth()->user()->role_id != 1) {
+            return redirect()->route('home')->with('error', 'Unauthorized action.');        }
 
         return $next($request);
     }

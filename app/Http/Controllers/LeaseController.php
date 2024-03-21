@@ -24,38 +24,46 @@ class leaseController extends Controller
     {
         $leaseRepository = new leaseRepository($this->lease);
 
-        if($request->has('car_columns') && $request->car_columns != '')
-        {
-            $columns = 'car:id,'.$request->car_columns;
-            $leaseRepository->selectRelationatedColumns($columns); 
-        } else 
-        {
-            $leaseRepository->selectRelationatedColumns('car');
-        }
-
-        if($request->has('costumer_columns') && $request->costumer_columns != '')
-        {
-            $columns = 'costumer:id,'.$request->costumer_columns;
-            $leaseRepository->selectRelationatedColumns($columns); 
-        } else 
-        {
-            $leaseRepository->selectRelationatedColumns('costumer');
-        }
-
-        // If the user specified the columns
-        if($request->has('columns') && $request->columns != '')
-        {
-            $columns = $request->columns;
-            $leaseRepository->selectColumns($columns);
-        }
-
-        // Use filter=name:=:lease;doors:=:4
-        if($request->has('filter') && $request->filter != ''){
-            $filters = explode(';',$request->filter);
-            foreach($filters as $key => $value){
-                $condition = explode(':', $value);
-                $leaseRepository->filter($condition[0], $condition[1], $condition[2]);
+        // Filter on lease table
+        $filters = ['initial_date', 'final_date'];
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                if($filter == 'initial_date'){
+                    $column = 'start_date';
+                } else if ($filter == 'final_date'){
+                    $column = 'expected_end_date';
+                }
+                $leaseRepository->filter($request->$filter, $column);
             }
+        }
+
+        // Filter on relationated tables (car_models, cars, costumer)
+        $relationatedFilters = ['car_model_name', 'costumer_name', 'car_plate'];
+        foreach ($relationatedFilters as $filter) {
+             if ($request->filled($filter)) {
+
+                switch ($filter){
+                    case 'car_model_name':
+                        $column = 'name';
+                        $relationatedTable = 'car_models';
+                        break;
+                    case 'costumer_name':
+                        $column = 'name';
+                        $relationatedTable = 'user';
+                        break;
+                    case 'car_plate':
+                        $column = 'plate';
+                        $relationatedTable = 'cars';
+                        break;
+                    default:
+                    return http_response_code(400);
+                }
+                $leaseRepository->filterRelationatedColumns($relationatedTable, $request->$filter, $column);
+             }
+         }
+
+        if($request->has('paginate') && $request->paginate != ''){
+           return $leaseRepository->getPaginatedResults($request->paginate);
         }
 
         return $leaseRepository->getResults();
