@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('costumers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 30);
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

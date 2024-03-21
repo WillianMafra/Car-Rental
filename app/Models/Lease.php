@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Car;
-use App\Models\Costumer;
+use App\Models\User;
 
 class Lease extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'costumer_id',
+        'user_id',
         'car_id',
         'start_date',
         'expected_end_date',
@@ -25,7 +25,7 @@ class Lease extends Model
 
     public function rules(){
         return  [
-            'costumer_id' => 'exists:costumers,id',
+            'user_id' => 'exists:costumers,id',
             'car_id' => 'exists:cars,id|integer',
             'start_date' => 'required|date',
             'expected_end_date' => 'required|date',
@@ -45,8 +45,8 @@ class Lease extends Model
         return $this->belongsTo(Car::class);
     }
 
-    public function costumer(): BelongsTo {
-        return $this->belongsTo(Costumer::class);
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
     }
  
 }
