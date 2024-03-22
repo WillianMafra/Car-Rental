@@ -25,7 +25,7 @@ class Lease extends Model
 
     public function rules(){
         return  [
-            'user_id' => 'exists:costumers,id',
+            'user_id' => 'exists:user,id',
             'car_id' => 'exists:cars,id|integer',
             'start_date' => 'required|date',
             'expected_end_date' => 'required|date',

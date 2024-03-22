@@ -24,6 +24,12 @@ class leaseController extends Controller
     {
         $leaseRepository = new leaseRepository($this->lease);
 
+
+        
+        // Select columns in car and user table
+        $relationatedTables = ['user', 'car', 'car.carModel'];
+        $leaseRepository->selectRelationatedColumns($relationatedTables);
+        
         // Filter on lease table
         $filters = ['initial_date', 'final_date'];
         foreach ($filters as $filter) {
@@ -38,14 +44,14 @@ class leaseController extends Controller
         }
 
         // Filter on relationated tables (car_models, cars, costumer)
-        $relationatedFilters = ['car_model_name', 'costumer_name', 'car_plate'];
+        $relationatedFilters = ['car_model_id', 'costumer_name', 'car_plate'];
         foreach ($relationatedFilters as $filter) {
              if ($request->filled($filter)) {
 
                 switch ($filter){
-                    case 'car_model_name':
-                        $column = 'name';
-                        $relationatedTable = 'car_models';
+                    case 'car_model_id':
+                        $column = 'id';
+                        $relationatedTable = 'car.carModel';
                         break;
                     case 'costumer_name':
                         $column = 'name';
@@ -53,7 +59,7 @@ class leaseController extends Controller
                         break;
                     case 'car_plate':
                         $column = 'plate';
-                        $relationatedTable = 'cars';
+                        $relationatedTable = 'car';
                         break;
                     default:
                     return http_response_code(400);

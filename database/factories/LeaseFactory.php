@@ -16,8 +16,20 @@ class LeaseFactory extends Factory
      */
     public function definition(): array
     {
+        $endDate = fake()->dateTimeThisYear();
+        $expectedEndDate = fake()->dateTimeThisYear($endDate);
+        $startDate = fake()->dateTimeThisYear($expectedEndDate);
+        $initialKm = fake()->numberBetween(500, 900);
+        $finalKm = fake()->numberBetween($initialKm, 1500);
         return [
-            //
+            'user_id' => fake()->numberBetween(1,2),
+            'car_id' => fake()->numberBetween(1,5),
+            'start_date' => $startDate,
+            'expected_end_date' => $expectedEndDate,
+            'actual_end_date' => $endDate,
+            'daily_rate' => fake()->numberBetween(5, 20),
+            'initial_km' => $initialKm,
+            'final_km' => $finalKm
         ];
     }
 }
