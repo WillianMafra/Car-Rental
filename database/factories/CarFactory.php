@@ -17,7 +17,10 @@ class CarFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'car_model_id' => fake()->numberBetween(1,7),
+            'plate' => fake()->currencyCode().fake()->randomNumber(4, true),
+            'avaliable' => fake()->boolean(),
+            'km' => fake()->numberBetween(10, 100000)
         ];
     }
 }

@@ -35,7 +35,7 @@
                                 <a class="nav-link" href="#">Costumers  </a>
                             </li>    
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Leases</a>
+                                <a class="nav-link" href="{{ route('leases') }}">Leases</a>
                             </li>
                             
                             <li class="nav-item dropdown">

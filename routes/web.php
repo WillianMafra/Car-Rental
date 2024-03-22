@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->middleware('auth');
 
 Auth::routes();
 
@@ -35,4 +35,8 @@ Route::middleware(['auth', 'admin'])->group(function (){
     Route::get('/car-model', function(){
         return view('car-models');
     })->name('car-model');
+
+    Route::get('/leases', function(){
+        return view('leases');
+    })->name('leases');
 });

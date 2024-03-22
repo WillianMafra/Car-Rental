@@ -77,6 +77,9 @@ app.component('true-false-icons-component', trueFalseIcons);
 import YesNoComponent from './components/YesNo.vue';
 app.component('yes-no-component', YesNoComponent);
 
+import LeaseComponent from './components/Leases.vue';
+app.component('lease-component', LeaseComponent);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

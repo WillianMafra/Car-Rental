@@ -6,12 +6,10 @@
                     <template v-slot:content>
                         <div class="form-row">
                             <div class="col mb-3">
-                                <input-component title="Costomer Name" id="inputName">
+                                <input-component title="Costumer Name" id="inputName">
                                     <input type="text" class="form-control" id="inputName" v-model="filters.costumer_name">
                                 </input-component>
-                                <input-component title="Car Model" id="inputName">
-                                    <input type="text" class="form-control" id="inputName" v-model="filters.car_model_name">
-                                </input-component>
+                                <select-component :title="'Car Model'" v-model="filters.car_model_id" :data="carModels"></select-component>
                                 <input-component title="Car Plate" id="inputName">
                                     <input type="text" class="form-control" id="inputName" v-model="filters.car_plate">
                                 </input-component>
@@ -32,28 +30,28 @@
                     <div class="card-header">Lease List</div>
                     <div class="card-body">
                         <table-component 
-                            :data="brands.data" 
+                            :data="leases.data" 
                             :deleteButton="{
                                 visible: true,
                                 toggle: 'modal',
-                                target: '#deleteBrandModal'
+                                target: '#deleteModal'
                             }"
                             :showButton="{
                                 visible: true,
                                 toggle: 'modal',
-                                target: '#showBrandModal'
+                                target: '#showModal'
                             }"
                             :editButton="{
                                 visible: true,
                                 toggle: 'modal',
-                                target: '#editBrandModal'
+                                target: '#editModal'
                             }"
                             :tableHeaders="{
                                 id: { title: 'id', type: 'text' },
-                                costumer_name: { title: 'Costumer', type: 'text' },
-                                car_model: { title: 'Car Model', type: 'text'},
-                                car_plate: { title: 'Plate', type: 'text'},
-                                lease_date: { title: 'Leased at', type: 'text'},
+                                costumer_name: { title: 'Costumer', type: 'text', 'path': 'user.name' },
+                                car_model: { title: 'Car Model', type: 'text', 'path': 'car.car_model.name'},
+                                car_plate: { title: 'Plate', type: 'text', 'path': 'car.plate'},
+                                lease_date: { title: 'Leased at', type: 'text', 'path': 'start_date'},
                             }">
                         </table-component>
                     </div>
@@ -70,16 +68,37 @@
             </div>
         </div>
         <!-- Show Modal -->
-        <modal-component id="showBrandModal" title="Show Brand">
+        <modal-component v-if="$store.state.item.user" id="showModal" title="Show Lease">
             <template v-slot:content>
                 <input-component title="ID">
                     <input disabled type="text" :value="$store.state.item.id" class="form-control">
                 </input-component>
-                <input-component title="Name">
-                    <input disabled type="text" :value="$store.state.item.name" class="form-control" >
+                <input-component title="Costumer Name">
+                    <input disabled type="text" :value="$store.state.item.user.name" class="form-control" >
                 </input-component>
-                <input-component title="Image" >
-                    <img v-if="$store.state.item.image" :src="'/storage/' + $store.state.item.image" alt="Image" class="img-fluid" style="margin: 0 0 0 1%;" >
+                <input-component title="Car Model">
+                    <input disabled type="text" :value="$store.state.item.car.car_model.name" class="form-control" >
+                </input-component>
+                <input-component title="Plate">
+                    <input disabled type="text" :value="$store.state.item.car.plate" class="form-control" >
+                </input-component>
+                <input-component title="Initial KM">
+                    <input disabled type="text" :value="$store.state.item.initial_km" class="form-control" >
+                </input-component>
+                <input-component title="Final KM">
+                    <input disabled type="text" :value="$store.state.item.final_km" class="form-control" >
+                </input-component>
+                <input-component title="Leased at">
+                    <input disabled type="datetime-local" :value="$store.state.item.start_date" class="form-control" >
+                </input-component>
+                <input-component title="Expected End Date">
+                    <input disabled type="datetime-local" :value="$store.state.item.expected_end_date" class="form-control" >
+                </input-component>
+                <input-component title="Actual End Date ">
+                    <input disabled type="datetime-local" :value="$store.state.item.actual_end_date" class="form-control" >
+                </input-component>
+                <input-component title="Daily Rate">
+                    <input disabled type="text" :value="$store.state.item.daily_rate" class="form-control" >
                 </input-component>
             </template>
             <template v-slot:modal-footer>
@@ -87,7 +106,7 @@
             </template>
         </modal-component>
          <!-- Delete Modal -->
-         <modal-component id="deleteBrandModal" title="Delete Brand">
+         <modal-component id="deleteModal" title="Delete Lease">
             <template v-slot:alerts>
                 <alert-component :title="'Success'" :details="returnDetails" v-if="$store.state.transaction.status == 'success'"  type="success"></alert-component>
                 <alert-component :title="'Error'" :details="returnDetails" v-if="$store.state.transaction.status == 'error'" type="danger"></alert-component>
@@ -105,28 +124,6 @@
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteLease()">Delete</button>
             </template>
         </modal-component>
-
-        <!-- Edit Modal -->
-        <!-- <modal-component id="editBrandModal" title="Edit Brand">
-        <template v-slot:alerts>
-            <alert-component :title="'Success'" v-if="this.$store.state.transaction.status == 'success'"  type="success"></alert-component>
-            <alert-component :title="'Error'" v-if="this.$store.state.transaction.status == 'error'" type="danger"></alert-component>
-        </template>
-        <template v-slot:content>
-            <div class="form-group">
-                <input-component title="New Brand Name" id="inputEditBrandName" >
-                    <input type="text" class="form-control" id="inputEditBrandName" v-model="$store.state.item.name">
-                </input-component>
-                <input-component title="New Image" id="inputEditBrandImage">
-                    <input type="file" class="form-control" id="inputEditBrandImage" @change="loadImage($event)">
-                </input-component>
-            </div>
-        </template>
-        <template v-slot:modal-footer>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="updateBrand()">Update</button>
-        </template>
-        </modal-component> -->
     </div>
 </template>
 <script>
@@ -152,19 +149,20 @@ import { storeKey } from 'vuex';
                 leases: [],
                 filters: { 
                     costumer_name: '',
-                    car_model_name: '',
+                    car_model_id: '',
                     car_plate: '',
                     initial_date: '',
                     final_date: ''
                 },
                 paginationUrl: '',
-                filterUrl: ''
+                filterUrl: '',
+                carModels: []
             }
         },
         methods:
             {
                 loadList() {
-                    let url = this.baseUrl + '?' + this.paginationUrl + this.filterUrl + '&paginate=2';
+                    let url = this.baseUrl + '?' + this.paginationUrl + this.filterUrl + '&paginate=5';
                     let config = {
                         headers: {
                             'Accept': 'application/json',
@@ -188,7 +186,11 @@ import { storeKey } from 'vuex';
                     let filter = '';
                     for(let key in this.filters){
                         if(this.filters[key] != ''){
-                            filter += `&${key}=ilike:%${this.filters[key]}%`                            
+                            if(key == 'car_model_id'){
+                                filter += `&${key}==:${this.filters[key]}`                            
+                            } else {
+                                filter += `&${key}=ilike:%${this.filters[key]}%`                            
+                            }
                         }
                     }
                     if(filter != ''){
@@ -218,34 +220,25 @@ import { storeKey } from 'vuex';
                         this.$store.state.transaction.message = errors
                     })
                 },
-                // updateBrand(){
-                //     let url = this.baseUrl + '/' + this.$store.state.item.id
-
-                //     let formData = new FormData();
-                //     formData.append('_method', 'patch');
-                //     if(this.imageFile[0]){
-                //         formData.append('image', this.imageFile[0]);
-                //     }
-                //     formData.append('name', this.$store.state.item.name);
-                //     let config = {
-                //         headers: {
-                //             'Content-Type': 'multipart/form-data',
-                //             'Accept': 'application/json',
-                //             'Authorization': this.token
-                //         }
-                //     }
-                //     axios.post(url, formData, config)
-                //     .then(response => {
-                //         this.loadList();
-                //     })
-                //     .catch(errors => {
-                //         console.log(errors);
-                //         this.$store.state.transaction.status = 'error'
-                //         this.$store.state.transaction.message = errors.response.data.errors
-                //     })
-                // }
+                getCarModels(){
+                    let url = 'http://localhost/api/car-model';
+                    let config = {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+                    axios.get(url, config)
+                    .then(response => {
+                        this.carModels = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    })
+                }
             },
             mounted() {
+                this.getCarModels();
                 this.loadList();
             }
         }
