@@ -466,6 +466,8 @@ export default {
                     
                     axios.post(url, formData, config)
                     .then(response => {
+                        this.$store.state.transaction.status = 'success';
+                        this.$store.state.transaction.message = 'Car Leased!'
                         this.loadList();
                     })
                 }

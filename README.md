@@ -43,7 +43,7 @@
 5. Rename the .env copy file to .env.
 
 ```bash
-    mv '.env copy' .env
+    mv '.env.example' .env
 ```
 
 6. Initialize the Docker environment using Sail.
@@ -69,7 +69,19 @@
     php artisan migrate --seed
 ```
 
-10.  Run npm install to install Node.js dependencies and npm run dev to compile assets.
+10. Create the jwt secret key.
+    
+```bash
+    php artisan jwt:secret
+```
+
+10. Create the link to storage files.
+    
+```bash
+    php artisan storage:link
+```
+
+12.  Run npm install to install Node.js dependencies and npm run dev to compile assets.
 ```bash
     npm install
     npm run dev
@@ -80,7 +92,7 @@
 After following the steps above, the Task Manager app should be up and running and accessible through the web browser at the following address:
 
 ```
-http://localhost
+http://localhost/login
 ```
 
 ## Stopping the Sail Environment
