@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\carController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,28 +16,32 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route('cars');
 })->middleware('auth');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::middleware('auth')->group( function (){
+    Route::get('/cars', function(){
+        return view('cars');
+    })->name('cars');
 
+    Route::get('/my-leases', function(){
+        return view('my-leases');
+    })->name('my-leases');
+
+});
 
 Route::middleware(['auth', 'admin'])->group(function (){
     Route::get('/brands', function(){
         return view('brands');
     })->name('brands');
 
-    Route::get('/cars', function(){
-        return view('cars');
-    })->name('cars');
-
     Route::get('/car-model', function(){
         return view('car-models');
     })->name('car-model');
 
-    Route::get('/leases', function(){
+Route::get('/leases', function(){
         return view('leases');
     })->name('leases');
 });

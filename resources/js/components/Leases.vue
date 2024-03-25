@@ -14,7 +14,7 @@
                                     <input type="text" class="form-control" id="inputName" v-model="filters.car_plate">
                                 </input-component>
                                 <input-component title="Initial Date" id="inputName">
-                                    <input type="text" class="form-control" id="inputName" v-model="filters.initial_date">
+                                    <input type="date" class="form-control" id="inputName" v-model="filters.initial_date">
                                 </input-component>
                                 <input-component title="Final Date" id="finalDate">
                                     <input type="date" class="form-control" id="finalDate" v-model="filters.final_date">

@@ -15,7 +15,9 @@ class Car extends Model
         'car_model_id',
         'plate',
         'avaliable',
-        'km'
+        'km',
+        'daily_rate'
+
     ];
 
     public function rules(){
@@ -23,7 +25,9 @@ class Car extends Model
             'car_model_id' => 'exists:car_models,id',
             'plate' => 'required',
             'avaliable' => 'required',
-            'km' => 'required|'
+            'km' => 'required|',
+            'daily_rate' => 'required|numeric'
+
         ];
     }
 

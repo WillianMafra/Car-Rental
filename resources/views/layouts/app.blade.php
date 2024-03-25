@@ -28,9 +28,10 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-                        @auth
+                    @auth
+                        <!-- Left Side Of Navbar -->
+                        <ul class="navbar-nav me-auto">
+                            @if (!empty(auth()->user()) && auth()->user()->role_id == 1)
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Costumers  </a>
                             </li>    
@@ -48,9 +49,17 @@
                                     <li><a class="dropdown-item" href="{{ route('car-model') }}">Car Models</a></li>
                                 </ul>
                             </li>
-                        @endauth
-                    </ul>
-
+                            @else
+                                <li class="nav-item">
+                                <a class="nav-link" href="{{ route('cars') }}">Cars</a>
+                                </li>   
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('my-leases') }}">My Leases</a>
+                                </li>
+                            @endif
+                            
+                        </ul>
+                    @endauth
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
