@@ -1,10 +1,10 @@
 # Car Rental  
 ### 📝 Car rental is a full stack api rest web application made to rent cars. The application have admin and user role, only admins can create brands, car models and cars. Users only can rent cars to use. 
-<img src="api.png" alt="super-gestao">
+<img src="api.png" alt="car-rental-api">
 
 ## 🛠️ Made with Laravel, VueJS Composer, NPM, PHP, Postgres, Swagger and Docker
 
-## What you need to use TaskManager:
+## What you need to use Car Rental:
 
 - Docker
 - Docker Compose
@@ -89,11 +89,13 @@
 
 ## Accessing the Application
 
-After following the steps above, the Task Manager app should be up and running and accessible through the web browser at the following address:
+After following the steps above, the Car Rental app should be up and running and accessible through the web browser at the following address:
 
 ```
 http://localhost/login
 ```
+
+You can login in the application as user with the email => 'test@user.com' and password '12345' or login as admin using email => 'test@admin.com and password '12345'
 
 ## Stopping the Sail Environment
 To stop the Sail environment, exit the application shell by typing
