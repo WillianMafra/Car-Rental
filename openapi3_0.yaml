@@ -1,0 +1,767 @@
+
+"openapi": "3.0.0"
+"info":
+  "title": "Car Rental Api"
+  "description": "This is the documentation for the car-rental application."
+  "contact":
+    "email": "willnmafra@gmail.com"
+  "license":
+    "name": "MIT License"
+  "version": "1.0.0"
+"paths":
+  "/api/brand":
+    "get":
+      "tags":
+        - "Brands"
+      "summary": "Get a list of brands"
+      "operationId": "25c1b1e2bbeba7bfb9df6748b277a205"
+      "parameters":
+        -
+          "name": "columns"
+          "in": "query"
+          "description": "Columns for cars table. ex:"
+          "schema":
+            "properties":
+              "id":
+                "type": "string"
+                "example": "=:1"
+              "name":
+                "type": "string"
+                "example": "ilike:%ford%"
+            "type": "object"
+        -
+          "name": "paginate"
+          "in": "query"
+          "description": "Number of items per page for pagination"
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "400":
+          "description": "Bad request"
+    "post":
+      "tags":
+        - "Brands"
+      "summary": "Create a new brand"
+      "operationId": "66f8aee8d6a4df9c4f487ee237adeacf"
+      "requestBody":
+        "description": "Brand data to be created"
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "name":
+                  "description": "Name of the brand"
+                  "type": "string"
+                  "example": "Brand X"
+                "image":
+                  "description": "Image file of the brand logo"
+                  "type": "string"
+                  "format": "binary"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Brand created successfully"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Brand X created successfully"
+                "type": "object"
+        "422":
+          "description": "Validation error"
+  "/api/brand/{brandId}":
+    "get":
+      "tags":
+        - "Brands"
+      "summary": "Get details of a specific brand"
+      "operationId": "0c580ba8389357419035d2b503d3d80e"
+      "parameters":
+        -
+          "name": "brandId"
+          "in": "path"
+          "description": "ID of the brand"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "404":
+          "description": "Brand not found"
+    "post":
+      "tags":
+        - "Brands"
+      "summary": "Update a brand"
+      "operationId": "ddd8fe33fe25375c45855cdabd44d960"
+      "parameters":
+        -
+          "name": "brandId"
+          "in": "path"
+          "description": "ID of the brand"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "requestBody":
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "name":
+                  "description": "Name of the brand"
+                  "type": "string"
+                  "example": "ford"
+                "_method":
+                  "description": "method for the request"
+                  "type": "string"
+                  "example": "put"
+                "image":
+                  "description": "Image file of the brand"
+                  "type": "string"
+                  "format": "binary"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Brand updated successfully"
+                "type": "object"
+        "404":
+          "description": "Brand not found"
+    "delete":
+      "tags":
+        - "Brands"
+      "summary": "Delete a brand"
+      "operationId": "33653b5b9a22ef97c920d8ec755d9609"
+      "parameters":
+        -
+          "name": "brandId"
+          "in": "path"
+          "description": "ID of the brand"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Brand deleted successfully"
+                "type": "object"
+        "404":
+          "description": "Brand not found"
+  "/api/car":
+    "get":
+      "tags":
+        - "Cars"
+      "summary": "Get list of cars"
+      "operationId": "d20d7d3d848ab76e79fe38fb52b463d1"
+      "parameters":
+        -
+          "name": "carmodel_columns"
+          "in": "query"
+          "description": "(optional)Columns to select from car models table. ex: /api/car?carmodel_columns=name,image"
+          "schema":
+            "description": "List of columns separated by comma"
+            "type": "string"
+            "example": "brand_id"
+        -
+          "name": "columns"
+          "in": "query"
+          "description": "Columns for cars table. ex:"
+          "schema":
+            "properties":
+              "plate":
+                "type": "string"
+                "example": "ilike:%CNY5292%"
+              "car_model_id":
+                "type": "string"
+                "example": "=:5"
+              "km":
+                "type": "string"
+                "example": "=:27805"
+              "avaliable":
+                "type": "string"
+                "example": "=:true"
+              "daily_rate":
+                "type": "string"
+                "example": "=:38.06"
+            "type": "object"
+        -
+          "name": "filters"
+          "in": "query"
+          "description": "Filters for cars"
+          "schema":
+            "properties":
+              "doors":
+                "type": "string"
+                "example": "=:4"
+              "seats":
+                "type": "string"
+                "example": "=:5"
+              "abs":
+                "type": "string"
+                "example": "=:true"
+              "air_bag":
+                "type": "string"
+                "example": "=:true"
+            "type": "object"
+        -
+          "name": "paginate"
+          "in": "query"
+          "description": "Number of items per page for pagination"
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "400":
+          "description": "Bad request"
+    "post":
+      "tags":
+        - "Cars"
+      "summary": "Create a new car"
+      "operationId": "b037fba8d129d4e9b75161a2203ae7f7"
+      "requestBody":
+        "description": "Car data to be created"
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "plate":
+                  "description": "Car Plate"
+                  "type": "string"
+                  "example": "MGQ3055"
+                "daily_rate":
+                  "description": "Daily Rate"
+                  "type": "number"
+                  "format": "float"
+                  "example": "30.58"
+                "car_model_id":
+                  "description": "Car Model id"
+                  "type": "integer"
+                  "example": "1"
+                "km":
+                  "description": "Car's km"
+                  "type": "integer"
+                  "example": "1000"
+                "avaliable":
+                  "description": "Is the car avaliable?"
+                  "type": "boolean"
+                  "example": "true"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Car created successfully"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Car xPlatex created successfully"
+                "type": "object"
+        "422":
+          "description": "Validation error"
+  "/api/car/{carId}":
+    "get":
+      "tags":
+        - "Cars"
+      "summary": "Get details of a specific car"
+      "operationId": "49a8108e926c88e26d0c8f78763174a8"
+      "parameters":
+        -
+          "name": "carId"
+          "in": "path"
+          "description": "ID of the car"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "responses":
+        "200":
+          "description": "A json with car data"
+        "404":
+          "description": "Car not found"
+    "post":
+      "tags":
+        - "Cars"
+      "summary": "Update a car"
+      "operationId": "80661648924b3fe1a4bc3e07bfea1fe1"
+      "parameters":
+        -
+          "name": "carId"
+          "in": "path"
+          "description": "ID of the car"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "requestBody":
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "plate":
+                  "description": "Plate of the car"
+                  "type": "string"
+                  "example": "mgq5588"
+                "_method":
+                  "description": "method for the request"
+                  "type": "string"
+                  "example": "put"
+                "km":
+                  "description": "KM of the car"
+                  "type": "integer"
+                  "example": "20000"
+                "car_model_id":
+                  "description": "Car model id"
+                  "type": "integer"
+                  "example": "1"
+                "daily_rate":
+                  "description": "Car Daily Rate"
+                  "type": "number"
+                  "format": "float"
+                  "example": "12.5"
+                "avaliable":
+                  "description": "Is the car avaliable?"
+                  "type": "boolean"
+                  "example": "true"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Brand updated successfully"
+                "type": "object"
+        "404":
+          "description": "Brand not found"
+    "delete":
+      "tags":
+        - "Cars"
+      "summary": "Delete a car"
+      "operationId": "209af6074e29326ad5505989d117aa33"
+      "parameters":
+        -
+          "name": "carId"
+          "in": "path"
+          "description": "ID of the brand"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Car deleted successfully"
+                "type": "object"
+        "404":
+          "description": "Car not found"
+  "/api/car-model":
+    "get":
+      "tags":
+        - "Car Models"
+      "summary": "Get list of car models"
+      "operationId": "6712dd60eb0c3386dfb34f1d81f39a0d"
+      "parameters":
+        -
+          "name": "columns"
+          "in": "query"
+          "description": "(optional)Columns to select from car models table. ex: /api/car?columns=brand_id,image,doors,air_bag,abs"
+          "schema":
+            "description": "List of columns separated by comma"
+            "type": "string"
+            "example": "brand_id,name,id"
+        -
+          "name": "filter"
+          "in": "query"
+          "description": "Filter for brands table"
+          "schema":
+            "properties":
+              "brand_name":
+                "type": "string"
+                "example": "ilike:%ford%"
+            "type": "object"
+        -
+          "name": "paginate"
+          "in": "query"
+          "description": "Number of items per page for pagination"
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "400":
+          "description": "Bad request"
+    "post":
+      "tags":
+        - "Car Models"
+      "summary": "Store a newcar model"
+      "operationId": "75bd453712f3f7fed32025281562c3c9"
+      "requestBody":
+        "description": "Car model data"
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "name":
+                  "description": "Car Model Name"
+                  "type": "string"
+                  "example": "320i"
+                "brand_id":
+                  "description": "Brand Id"
+                  "type": "integer"
+                  "example": "2"
+                "doors":
+                  "description": "Number of doors"
+                  "type": "integer"
+                  "example": "4"
+                "seats":
+                  "description": "Number of seats"
+                  "type": "integer"
+                  "example": "5"
+                "abs":
+                  "description": "The car have abs? (1 to true and 0 to false)"
+                  "type": "integer"
+                  "example": "0"
+                "air_bag":
+                  "description": "The car have air bag? (1 to true and 0 to false)"
+                  "type": "integer"
+                  "example": "1"
+                "image":
+                  "description": "Image file of the car model"
+                  "type": "string"
+                  "format": "binary"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Json with car model data"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Car Model xNamex created successfully"
+                "type": "object"
+        "400":
+          "description": "Bad request"
+  "/api/car-model/{carModelId}":
+    "get":
+      "tags":
+        - "Car Models"
+      "summary": "Get details of a specific car model"
+      "operationId": "b1ffde9018d96a36e8c4fdd5a515c314"
+      "parameters":
+        -
+          "name": "carModelId"
+          "in": "path"
+          "description": "ID of the car model"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "404":
+          "description": "Car Model not found"
+    "post":
+      "tags":
+        - "Car Models"
+      "summary": "Update a car model"
+      "operationId": "13cf19c2d6a6c3548688b55aa1cb4dcc"
+      "parameters":
+        -
+          "name": "carModelId"
+          "in": "path"
+          "description": "ID of the car model"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "requestBody":
+        "description": "Car model data"
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "_method":
+                  "description": "method for the request"
+                  "type": "string"
+                  "example": "patch"
+                "name":
+                  "description": "Car Model Name"
+                  "type": "string"
+                  "example": "i30"
+                "brand_id":
+                  "description": "Brand Id"
+                  "type": "integer"
+                  "example": "2"
+                "doors":
+                  "description": "Number of doors"
+                  "type": "integer"
+                  "example": "4"
+                "seats":
+                  "description": "Number of seats"
+                  "type": "integer"
+                  "example": "5"
+                "abs":
+                  "description": "The car have abs? (1 to true and 0 to false)"
+                  "type": "integer"
+                  "example": "0"
+                "air_bag":
+                  "description": "The car have air bag? (1 to true and 0 to false)"
+                  "type": "integer"
+                  "example": "1"
+                "image":
+                  "description": "Image file of the car model"
+                  "type": "string"
+                  "format": "binary"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Brand updated successfully"
+                "type": "object"
+        "404":
+          "description": "Brand not found"
+    "delete":
+      "tags":
+        - "Car Models"
+      "summary": "Delete a car model"
+      "operationId": "581c1f0113ba5b95178a620eee5ef391"
+      "parameters":
+        -
+          "name": "carModelId"
+          "in": "path"
+          "description": "ID of the car model"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "4"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Car Model deleted successfully"
+                "type": "object"
+        "404":
+          "description": "Car Model not found"
+  "/api/lease":
+    "get":
+      "tags":
+        - "Leases"
+      "summary": "Get list of leases"
+      "operationId": "4cf9a349d2a09f5742db6d8d341e114f"
+      "parameters":
+        -
+          "name": "carmodel_columns"
+          "in": "query"
+          "description": "(optional)Columns to select from realationated tables. ex: /api/car?car_model_id==:1"
+          "schema":
+            "properties":
+              "costumer_name":
+                "type": "string"
+                "example": "ilike:%user%"
+              "car_model_id":
+                "type": "string"
+                "example": "=:5"
+              "car_plate":
+                "type": "string"
+                "example": "=:MGQ3058"
+            "type": "object"
+        -
+          "name": "filters"
+          "in": "query"
+          "description": "Filters for leases"
+          "schema":
+            "properties":
+              "start_date":
+                "type": "string"
+                "example": "=:2024-01-01"
+              "expected_end_date":
+                "type": "string"
+                "example": "=:2024-12-31"
+            "type": "object"
+        -
+          "name": "paginate"
+          "in": "query"
+          "description": "Number of items per page for pagination"
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "responses":
+        "200":
+          "description": "Successful operation"
+        "400":
+          "description": "Bad request"
+    "post":
+      "tags":
+        - "Leases"
+      "summary": "Create a new lease"
+      "operationId": "c7914fba37c9e83b150f8bad2d2d1dd2"
+      "requestBody":
+        "description": "Lease data to be created"
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "id":
+                  "description": "Car ID"
+                  "type": "integer"
+                  "example": "1"
+                "start_date":
+                  "description": "Lease Start Date"
+                  "type": "string"
+                  "example": "2024-01-01 00:00:00"
+                "expected_end_date":
+                  "description": "Lease Expected End Date"
+                  "type": "string"
+                  "example": "2024-01-01 12:00:00"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Lease created successfully"
+        "422":
+          "description": "Validation error"
+  "/api/lease/{leaseId}":
+    "get":
+      "tags":
+        - "Leases"
+      "summary": "Get details of a specific lease"
+      "operationId": "26550988ff3a07df33f3da00022b12d1"
+      "parameters":
+        -
+          "name": "leaseId"
+          "in": "path"
+          "description": "ID of the lease"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "3"
+      "responses":
+        "200":
+          "description": "A json with lease data"
+        "404":
+          "description": "Lease not found"
+    "post":
+      "tags":
+        - "Leases"
+      "summary": "Update a lease"
+      "operationId": "b9d9b899102afd1f9df5230d4b3454d5"
+      "parameters":
+        -
+          "name": "leaseId"
+          "in": "path"
+          "description": "ID of the lease"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "2"
+      "requestBody":
+        "required": true
+        "content":
+          "multipart/form-data":
+            "schema":
+              "properties":
+                "_method":
+                  "description": "method for the request"
+                  "type": "string"
+                  "example": "patch"
+                "final_km":
+                  "description": "Final KM of the car"
+                  "type": "integer"
+                  "example": "20000"
+                "actual_end_date":
+                  "description": "Actual end date of the lease"
+                  "type": "string"
+                  "example": "2024-01-01 00:00:00"
+              "type": "object"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Lease updated successfully"
+                "type": "object"
+        "404":
+          "description": "Lease not found"
+    "delete":
+      "tags":
+        - "Leases"
+      "summary": "Delete a lease"
+      "operationId": "fd24b600ee2897d3dcfdac810b0870cb"
+      "parameters":
+        -
+          "name": "leaseId"
+          "in": "path"
+          "description": "ID of the lease"
+          "required": true
+          "schema":
+            "type": "integer"
+          "example": "1"
+      "responses":
+        "200":
+          "description": "Successful operation"
+          "content":
+            "application/json":
+              "schema":
+                "properties":
+                  "msg":
+                    "type": "string"
+                    "example": "Lease deleted successfully"
+                "type": "object"
+        "404":
+          "description": "Lease not found"

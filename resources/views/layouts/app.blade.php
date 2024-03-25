@@ -33,9 +33,6 @@
                         <ul class="navbar-nav me-auto">
                             @if (!empty(auth()->user()) && auth()->user()->role_id == 1)
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Costumers  </a>
-                            </li>    
-                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('leases') }}">Leases</a>
                             </li>
                             

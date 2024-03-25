@@ -19,8 +19,37 @@ class BrandController extends Controller
     }
     
     /**
-     * Display a listing of the resource.
-     */
+ * @OA\Get(
+ *     path="/api/brand",
+ *     summary="Get a list of brands",
+ *     tags={"Brands"},
+ *      @OA\Parameter(
+ *         name="columns",
+ *         in="query",
+ *         description="Columns for cars table. ex:",
+ *         @OA\Schema(
+ *             type="object",
+ *             @OA\Property(property="id", type="text", example="=:1"),
+ *             @OA\Property(property="name", type="text", example="ilike:%ford%"),
+ *         )
+ *     ),
+ *     @OA\Parameter(
+ *         name="paginate",
+ *         in="query",
+ *         example="2",
+ *         description="Number of items per page for pagination",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Successful operation",
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad request"
+ *     )
+ * )
+ */
     public function index(Request $request)
     {
         $brandRepository = new brandRepository($this->brand);
@@ -47,7 +76,45 @@ class BrandController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/brand",
+     *     summary="Create a new brand",
+     *     tags={"Brands"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Brand data to be created",
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     description="Name of the brand",
+     *                     example="Brand X"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Image file of the brand logo"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Brand created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="msg", type="string", example="Brand X created successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -74,7 +141,27 @@ class BrandController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/brand/{brandId}",
+     *     summary="Get details of a specific brand",
+     *     tags={"Brands"},
+     *     @OA\Parameter(
+     *         name="brandId",
+     *         in="path",
+     *         description="ID of the brand",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Brand not found"
+     *     )
+     * )
      */
     public function show($brandId)
     {
@@ -91,7 +178,58 @@ class BrandController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * @OA\POST(
+     *     path="/api/brand/{brandId}",
+     *     summary="Update a brand",
+     *     tags={"Brands"},
+     *     @OA\Parameter(
+     *         name="brandId",
+     *         in="path",
+     *         description="ID of the brand",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     example="ford",
+     *                     description="Name of the brand"
+     *                 ),
+     *                     @OA\Property(
+     *                     property="_method",
+     *                     type="string",
+     *                     description="method for the request",
+     *                     example="put"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Image file of the brand"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="msg", type="string", example="Brand updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Brand not found"
+     *     )
+     * )
      */
     public function update(Request $request, $brandId)
     {
@@ -135,8 +273,32 @@ class BrandController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+        * @OA\Delete(
+        *     path="/api/brand/{brandId}",
+        *     summary="Delete a brand",
+        *     tags={"Brands"},
+        *     @OA\Parameter(
+        *         name="brandId",
+        *         in="path",
+        *         description="ID of the brand",
+        *         required=true,
+        *         example="1",
+        *         @OA\Schema(type="integer")
+        *     ),
+        *     @OA\Response(
+        *         response=200,
+        *         description="Successful operation",
+        *         @OA\JsonContent(
+        *             type="object",
+        *             @OA\Property(property="msg", type="string", example="Brand deleted successfully")
+        *         )
+        *     ),
+        *     @OA\Response(
+        *         response=404,
+        *         description="Brand not found"
+        *     )
+        * )
+    */
     public function destroy($brandId)
     {
         $brand = $this->brand->find($brandId);
