@@ -27,7 +27,6 @@ class LeaseFactory extends Factory
             'start_date' => $startDate,
             'expected_end_date' => $expectedEndDate,
             'actual_end_date' => $endDate,
-            'daily_rate' => fake()->numberBetween(5, 20),
             'initial_km' => $initialKm,
             'final_km' => $finalKm
         ];

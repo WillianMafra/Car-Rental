@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('plate', 10)->unique();
             $table->boolean('avaliable');
             $table->integer('km');
+            $table->float('daily_rate', 8, 2);
             $table->timestamps();
     
             //foreign key (constraints)

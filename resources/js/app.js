@@ -80,6 +80,9 @@ app.component('yes-no-component', YesNoComponent);
 import LeaseComponent from './components/Leases.vue';
 app.component('lease-component', LeaseComponent);
 
+import MyLeasesComponent from './components/MyLeases.vue';
+app.component('my-leases-component', MyLeasesComponent);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

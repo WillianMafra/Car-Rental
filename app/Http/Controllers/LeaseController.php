@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Lease;
 use App\Repositories\leaseRepository;
 use Illuminate\Http\Request;
+use App\Models\Car;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class leaseController extends Controller
 {
@@ -82,10 +84,20 @@ class leaseController extends Controller
     {
         // store the new lease
         $newLease = new lease();
+        $user = JWTAuth::toUser();
 
-        $newLease->fill($request->all());
+        $car = Car::find($request->get('id'));
+        $newLease->user_id = $user->id;
+        $newLease->car_id = $request->get('id');
+        $newLease->start_date = $request->get('start_date');
+        $newLease->expected_end_date = $request->get('expected_end_date');
+        $newLease->initial_km = $car->km;
         $newLease->save();
-
+        
+        if(isset($newLease->id)){
+            $car->avaliable = 0;
+            $car->save();
+        }
         return response()->json([$newLease], 200);
     }
 
@@ -155,5 +167,30 @@ class leaseController extends Controller
         // If the resource was found,delete the resource and return with 200
         $this->lease->destroy($leaseId);
         return response()->json(['msg' => "Lease deleted successfully"], 200);
+    }
+
+    public function userLeases(Request $request)
+    {
+        $leaseRepository = new leaseRepository($this->lease);
+        
+        // Select columns in car and user table
+        $relationatedTables = ['user', 'car', 'car.carModel'];
+        $leaseRepository->selectRelationatedColumns($relationatedTables);
+
+        
+        // Filter on lease table
+        $filters = ['start_date', 'expected_end_date'];
+        foreach ($filters as $filter) {
+            if ($request->filled($filter)) {
+                $leaseRepository->filter($request->$filter, $filter);
+            }
+        }
+        $userId = '=:'.JWTAuth::toUser()->id;
+        $leaseRepository->filter($userId, 'user_id');
+
+        if($request->has('paginate') && $request->paginate != ''){
+            return $leaseRepository->getPaginatedResults($request->paginate);
+         }
+
     }
 }

@@ -27,8 +27,6 @@
                             <div class="col mb-3">
                                 <yes-no-component  v-model="filters.avaliable" :title="'Avaliable'"></yes-no-component>
                             </div>
-                            <yes-no-component></yes-no-component>
-
                         </div>
                     </template>
                     <template v-slot:footer>
@@ -41,7 +39,7 @@
                         <table-component 
                             :data="cars.data" 
                             :deleteButton="{
-                                visible: true,
+                                visible: user.role_id == 1 ? true : false,
                                 toggle: 'modal',
                                 target: '#deleteModal'
                             }"
@@ -51,12 +49,11 @@
                                 target: '#showModal'
                             }"
                             :editButton="{
-                                visible: true,
+                                visible:  user.role_id == 1 ? true : false,
                                 toggle: 'modal',
                                 target: '#editModal'
                             }"
                             :tableHeaders="{
-                                brand: { title: 'brand', type: 'text', path: 'car_model.brand.name' },
                                 car_model_id: { title: 'Model', type: 'text', path: 'car_model.name' },
                                 plate: { title: 'plate', type: 'text' },
                                 km: { title: 'km', type: 'number' },
@@ -69,12 +66,12 @@
                         <paginate-component class="me-auto">
                             <ul class="pagination">
                                 <li v-for="(link, key) in cars.links" :key="key" class="page-item">
-                                    <a :class="{ 'page-link': true, 'active': link.active }" href="#" @click="pagination(link)" v-html="link.label"></a>
+                                    <a :class="{ 'page-link': true, 'active': link.active }" href="#" @click.prevent="pagination(link)" v-html="link.label"></a>
                                 </li>
                             </ul>
                         </paginate-component>
                         <div style="margin-top: 0.5%;" class="col-1">
-                            <button type="submit" class="btn btn-primary btn-sm" height="15px" data-bs-toggle="modal" data-bs-target="#addModal" @click="clearTransaction()">Add</button>
+                            <button v-if="user.role_id == 1" type="submit" class="btn btn-primary btn-sm" height="15px" data-bs-toggle="modal" data-bs-target="#addModal" @click="clearTransaction()">Add</button>
                         </div>
                     </div>
                 </div>
@@ -119,6 +116,9 @@
                 <input-component v-if="$store.state.item.car_model" class=" fw-bold mb-2 mt-2" title="Seats">
                     <input disabled type="text" :value="$store.state.item.car_model.seats" class="form-control " >
                 </input-component>
+                <input-component v-if="$store.state.item.car_model" class=" fw-bold mb-2 mt-2" title="Daily Rate">
+                    <input disabled type="text" :value="$store.state.item.daily_rate" class="form-control " >
+                </input-component>
                 <true-false-icons-component v-if="$store.state.item.car_model" class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'Airbag'" :condition="$store.state.item.car_model.air_bag"></true-false-icons-component>
                 <true-false-icons-component v-if="$store.state.item.car_model" class="text-center" :style="'font-size: 18px'" :width="20" :height="20" :title="'ABS'" :condition="$store.state.item.car_model.abs"></true-false-icons-component>
                 <input-component v-if="$store.state.item.image" class="text-center">
@@ -126,6 +126,7 @@
                 </input-component>
             </template>
             <template v-slot:modal-footer>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaseModal" @click="clearTransaction()">Lease</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </template>
         </modal-component>
@@ -149,6 +150,37 @@
             <template v-slot:modal-footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteCar()">Delete</button>
+            </template>
+        </modal-component>
+         <!-- Lease Modal -->
+         <modal-component id="leaseModal" title="Lease">
+            <template v-slot:alerts>
+                <alert-component :title="'Success'" :details="returnDetails" v-if="$store.state.transaction.status == 'success'"  type="success"></alert-component>
+                <alert-component :title="'Error'" :details="returnDetails" v-if="$store.state.transaction.status == 'error'" type="danger"></alert-component>
+            </template>
+            <template v-if="$store.state.item.car_model" v-slot:content>
+                <input-component title="Name">
+                    <input disabled type="text" :value="$store.state.item.car_model.name" class="form-control" >
+                </input-component>
+                <input-component title="Plate">
+                    <input disabled type="text" :value="$store.state.item.plate" class="form-control" >
+                </input-component>
+                <input-component title="Daily Rate">
+                    <input disabled type="text" :value="$store.state.item.daily_rate" class="form-control" >
+                </input-component>
+                <input-component title="Start Date">
+                    <input required type="datetime-local" v-model="this.leaseData.start_date" class="form-control" >
+                </input-component>
+                <input-component title="Expected End Date">
+                    <input required :min="this.leaseData.start_date" type="datetime-local" v-model="this.leaseData.expected_end_date" class="form-control" >
+                </input-component>
+                <input-component title="Total">
+                    <input disabled  type="number" :value="calculateDateDifference * $store.state.item.daily_rate" class="form-control" >
+                </input-component>
+            </template>
+            <template v-slot:modal-footer>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" @click="leaseCar()">Confirm</button>
             </template>
         </modal-component>
 
@@ -179,6 +211,7 @@
 import { storeKey } from 'vuex';
 
 export default {
+        props: ['user'],
         computed: {
             token() {
                 let token = document.cookie.split(';').find(value => {
@@ -189,6 +222,25 @@ export default {
 
                 token = 'Bearer '+ token;
                 return token;
+            },
+            calculateDateDifference() {
+            if (!this.leaseData.start_date || !this.leaseData.expected_end_date) return '';
+            
+            const startDate = new Date(this.leaseData.start_date);
+            const endDate = new Date(this.leaseData.expected_end_date);
+            
+            const differenceMs = endDate - startDate;
+            
+            const differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+            
+            return differenceDays;
+            }
+        },
+        watch: {
+            'leaseData.start_date'(newStartDate) {
+                if (this.leaseData.expected_end_date && new Date(this.leaseData.expected_end_date) < new Date(newStartDate)) {
+                    this.leaseData.expected_end_date = newStartDate;
+                }
             }
         },
         data() {
@@ -212,15 +264,15 @@ export default {
                 },
                 paginationUrl: '',
                 filterUrl: '',
-                car_models: []
+                car_models: [],
+                leaseData: {
+                    start_date: '',
+                    expected_end_date: ''
+                }
             }
         },
         methods:
             {
-                loadImage(e) {
-                    this.imageFile = Array.from(e.target.files);
-                },
-
                 save()
                 {
                     let formData = new FormData();
@@ -252,7 +304,7 @@ export default {
                     })
                 },
                 loadList() {
-                    let url = this.baseUrl + '/car?' + this.paginationUrl + this.filterUrl + '&paginate=2';
+                    let url = this.baseUrl + '/car?' + this.paginationUrl + this.filterUrl + '&paginate=5 ';
                     let config = {
                         headers: {
                             'Accept': 'application/json',
@@ -362,6 +414,66 @@ export default {
                     this.$store.state.transaction.status = ''
                     this.$store.state.transaction.message = ''
                     this.returnStatus = ''
+                },
+                leaseCar(){
+                    let url = this.baseUrl + '/lease';
+                    let config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json',
+                            'Authorization': this.token
+                        }
+                    }
+
+                     // Verifica se as datas foram preenchidas
+                    if (this.leaseData.start_date == '' || this.leaseData.expected_end_date == '') {
+                        this.$store.state.transaction.status = 'error';
+                        this.$store.state.transaction.message = {
+                            error: {
+                                0: 'Select the start date and the expected end date!'   
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Validar as datas
+                    let startDate = new Date(this.leaseData.start_date);
+                    let endDate = new Date(this.leaseData.expected_end_date);
+
+                    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                        this.$store.state.transaction.status = 'error';
+                        this.$store.state.transaction.message = {
+                            error: {
+                                0: 'Invalid date format!'   
+                            }
+                        }
+                        return false;
+                    }
+
+                    // Verificar se a data de início é anterior à data final
+                    if (startDate >= endDate) {
+                        this.$store.state.transaction.status = 'error';
+                        this.$store.state.transaction.message = {
+                            error: {
+                                0: 'Start date must be before expected end date!'   
+                            }
+                        }
+                        return false;
+                    }
+
+                    let formData = new FormData();
+                    formData.append('id', this.$store.state.item.id);
+                    formData.append('start_date', this.leaseData.start_date);
+                    formData.append('expected_end_date',this.leaseData.expected_end_date);
+                    
+                    axios.post(url, formData, config)
+                    .then(response => {
+                        console.log(response)
+                        this.loadList();
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
                 }
             },
             mounted() {

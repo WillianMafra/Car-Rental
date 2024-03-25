@@ -18,7 +18,6 @@ class Lease extends Model
         'start_date',
         'expected_end_date',
         'actual_end_date',
-        'daily_rate',
         'initial_km',
         'final_km',
     ];
@@ -29,10 +28,7 @@ class Lease extends Model
             'car_id' => 'exists:cars,id|integer',
             'start_date' => 'required|date',
             'expected_end_date' => 'required|date',
-            'actual_end_date' => 'required|date',
-            'daily_rate' => 'required|numeric',
-            'initial_km' => 'required|integer',
-            'final_km' => 'required|integer'
+            'initial_km' => 'required|integer'
         ];
     }
 
