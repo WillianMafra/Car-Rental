@@ -92,6 +92,9 @@
                     <input-component title="KM" id="km" >
                         <input type="number" required value="0" min="0" class="form-control" id="km" v-model="newCar.km">
                     </input-component>
+                    <input-component title="Daily Rate" id="daily_rate" >
+                        <input type="number" required value="0" min="0" class="form-control" id="km" v-model="newCar.daily_rate">
+                    </input-component>
                     <checkbox-component title="Avaliable" id="avaliable" :checked="false" v-model="newCar.avaliable"></checkbox-component>
                 </div>
             </template>
@@ -198,6 +201,9 @@
             <input-component  class=" fw-bold mb-2 mt-2" title="Plate">
                 <input type="text" v-model="$store.state.item.plate" class="form-control " >
             </input-component>
+            <input-component  class=" fw-bold mb-2 mt-2" title="Daily Rate">
+                <input type="text" v-model="$store.state.item.daily_rate" class="form-control " >
+            </input-component>
             <checkbox-component title="Avaliable" id="avaliable" :checked="$store.state.item.avaliable" v-model="$store.state.item.avaliable"></checkbox-component>
         </template>
         <template v-slot:modal-footer>
@@ -247,10 +253,11 @@ export default {
             return {
                 baseUrl: 'http://localhost/api',
                 newCar: {
-                    plate: 2,
-                    km: 4,
+                    plate: '',
+                    km: '',
                     car_model_id: '',
                     avaliable: false,
+                    daily_rate: '',
                 },
                 imageFile: [],
                 returnStatus: '',
@@ -278,7 +285,7 @@ export default {
                     let formData = new FormData();
                     formData.append('plate', this.newCar.plate);
                     formData.append('km', this.newCar.km);
-                    formData.append('seats', this.newCar.seats);
+                    formData.append('daily_rate', this.newCar.daily_rate);
                     formData.append('car_model_id', this.newCar.car_model_id);
                     formData.append('avaliable', this.newCar.avaliable === true ? 1 : 0);
 
@@ -292,13 +299,11 @@ export default {
                     let url = this.baseUrl + '/car';
                     axios.post(url, formData, config)
                     .then(response => {
-                        console.log(response);
                         this.returnStatus = 'success'
                         this.$store.state.transaction.message = response.data.msg
                         this.loadList();
                     })
                     .catch(errors => {
-                        console.log(errors);
                         this.returnStatus = 'error'
                         this.$store.state.transaction.message = errors.response.data.errors
                     })
@@ -314,9 +319,6 @@ export default {
                     axios.get(url, config)
                     .then(response => {
                         this.cars = response.data;
-                    })
-                    .catch(errors => {
-                        console.log(errors);
                     })
                 },
                 pagination(link){
@@ -388,7 +390,6 @@ export default {
                         this.loadList();
                     })
                     .catch(errors => {
-                        console.log(errors);
                         this.$store.state.transaction.status = 'error'
                         this.$store.state.transaction.message = errors.response.data.errors
                     })
@@ -405,9 +406,6 @@ export default {
                     axios.get(url, config)
                     .then(response => {
                         this.car_models = response.data
-                    })
-                    .catch(error => {
-                        console.log(error)
                     })
                 },
                 clearTransaction(){
@@ -468,11 +466,7 @@ export default {
                     
                     axios.post(url, formData, config)
                     .then(response => {
-                        console.log(response)
                         this.loadList();
-                    })
-                    .catch(error => {
-                        console.log(error)
                     })
                 }
             },

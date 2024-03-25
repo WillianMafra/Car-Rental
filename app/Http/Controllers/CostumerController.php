@@ -6,7 +6,7 @@ use App\Models\Costumer;
 use App\Repositories\costumerRepository;
 use Illuminate\Http\Request;
 
-class costumerController extends Controller
+class CostumerController extends Controller
 {
 
     // To debug in POSTMAN, set in Header Accept => application/json

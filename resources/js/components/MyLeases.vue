@@ -59,7 +59,7 @@
             </div>
         </div>
         <!-- Show Modal -->
-        <modal-component id="showModal" title="Show Car Model">
+        <modal-component id="showModal" title="Show Lease">
             <template v-slot:content>
                 <input-component v-if="$store.state.item.car" class=" fw-bold mb-2 mt-2" title="Car Model">
                     <input disabled type="text" :value="$store.state.item.car.car_model.name" class="form-control " >

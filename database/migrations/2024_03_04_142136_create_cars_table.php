@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
     
             //foreign key (constraints)
-            $table->foreign('car_model_id')->references('id')->on('car_models');
+            $table->foreign('car_model_id')->references('id')->on('car_models')->onDelete('cascade');
         });
     }
 
